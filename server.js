@@ -38,15 +38,6 @@ app.post("/addQuestion", (request, response) => {
     });
 });
 
-/*app.get("/questions", (request, response) => {
-    collection.find({}).toArray((error, result) => {
-        if(error) {
-            return response.status(500).send(error);
-        }
-        response.send(result);
-    });
-});*/
-
 app.get("/questions", (request, response) => {
     let jsonQuery = "{ ";
 
@@ -110,40 +101,3 @@ app.get("/questions/random", (request, response) => {
         response.send(result[Math.floor(Math.random() * result.length)]);
     });
 });
-
-/*app.get("/questions/:category", (request, response) => {
-    collection.find( {"Category": request.params.category} ).toArray((error, result) => {
-        if(error) {
-            return response.status(500).send(error);
-        }
-        response.send(result);
-    });
-});
-
-app.get("/questions/:category/random", (request, response) => {
-    collection.find( {"Category": request.params.category} ).toArray((error, result) => {
-        if(error) {
-            return response.status(500).send(error);
-        }
-        response.send(result[Math.floor(Math.random() * result.length)]);
-    });
-});
-
-app.get("/questions/:category/:subcategory", (request, response) => {
-    collection.find( {"Category": request.params.category, "Subcategory": request.params.subcategory} ).toArray((error, result) => {
-        if(error) {
-            return response.status(500).send(error);
-        }
-        response.send(result);
-    });
-});
-
-app.get("/questions/:category/:subcategory/random", (request, response) => {
-    collection.find( {"Category": request.params.category, "Subcategory": request.params.subcategory} ).toArray((error, result) => {
-        if(error) {
-            return response.status(500).send(error);
-        }
-        response.send(result);
-    });
-       response.send(result[Math.floor(Math.random() * result.length)]);
-});*/
