@@ -38,8 +38,40 @@ app.post("/addQuestion", (request, response) => {
     });
 });
 
-app.get("/questions", (request, response) => {
+/*app.get("/questions", (request, response) => {
     collection.find({}).toArray((error, result) => {
+        if(error) {
+            return response.status(500).send(error);
+        }
+        response.send(result);
+    });
+});*/
+
+app.get("/questions", (request, response) => {
+    let jsonQuery = "{ ";
+
+    if (request.query.category) {
+        jsonQuery += `"Category": { "$in": [${request.query.category}] },`
+        if (request.query.subcategory) {
+            jsonQuery += `"Subcategory": { "$in": [${request.query.subcategory}] },`
+        }
+    }
+
+    if (request.query.author) {
+        jsonQuery += `"Author": { "$in": [${request.query.author}] },`
+    }
+
+    if (request.query.mindifficulty && !request.query.maxdifficulty) {
+        jsonQuery += `"Difficulty": { "$gte": ${request.query.mindifficulty} },`
+    } else if (request.query.maxdifficulty && !request.query.mindifficulty) {
+        jsonQuery += `"Difficulty": { "$lte": ${request.query.maxdifficulty} },`
+    } else if (request.query.mindifficulty && request.query.maxdifficulty) {
+        jsonQuery += `"Difficulty": { "$gte": ${request.query.mindifficulty}, "$lte": ${request.query.maxdifficulty} },`
+    }
+
+    jsonQuery = jsonQuery.substring(0, jsonQuery.length-1);
+    jsonQuery += " }";
+    collection.find(JSON.parse(jsonQuery)).toArray((error, result) => {
         if(error) {
             return response.status(500).send(error);
         }
@@ -48,7 +80,30 @@ app.get("/questions", (request, response) => {
 });
 
 app.get("/questions/random", (request, response) => {
-    collection.find({}).toArray((error, result) => {
+    let jsonQuery = "{ ";
+
+    if (request.query.category) {
+        jsonQuery += `"Category": { "$in": [${request.query.category}] },`;
+        if (request.query.subcategory) {
+            jsonQuery += `"Subcategory": { "$in": [${request.query.subcategory}] },`;
+        }
+    }
+
+    if (request.query.author) {
+        jsonQuery += `"Author": { "$in": [${request.query.author}] },`;
+    }
+
+    if (request.query.mindifficulty && !request.query.maxdifficulty) {
+        jsonQuery += `"Difficulty": { "$gte": ${request.query.mindifficulty} },`;
+    } else if (request.query.maxdifficulty && !request.query.mindifficulty) {
+        jsonQuery += `"Difficulty": { "$lte": ${request.query.maxdifficulty} },`;
+    } else if (request.query.mindifficulty && request.query.maxdifficulty) {
+        jsonQuery += `"Difficulty": { "$gte": ${request.query.mindifficulty}, "$lte": ${request.query.maxdifficulty} },`;
+    }
+
+    jsonQuery = jsonQuery.substring(0, jsonQuery.length-1);
+    jsonQuery += " }";
+    collection.find(JSON.parse(jsonQuery)).toArray((error, result) => {
         if(error) {
             return response.status(500).send(error);
         }
@@ -56,7 +111,7 @@ app.get("/questions/random", (request, response) => {
     });
 });
 
-app.get("/questions/:category", (request, response) => {
+/*app.get("/questions/:category", (request, response) => {
     collection.find( {"Category": request.params.category} ).toArray((error, result) => {
         if(error) {
             return response.status(500).send(error);
@@ -91,4 +146,4 @@ app.get("/questions/:category/:subcategory/random", (request, response) => {
         response.send(result);
     });
        response.send(result[Math.floor(Math.random() * result.length)]);
-});
+});*/
