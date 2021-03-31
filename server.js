@@ -6,13 +6,13 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 var database, collection;
-const port = process.env.MEESEAPI_PORT;
+const port = process.env.API_PORT;
 
 const DATABASE_NAME = process.env.DATABASE_NAME;
 const CONNECTION_URL = "localhost:27017"
 
 app.listen(process.env.API_PORT || 8000, () => {
-  console.log("Running on port ", process.env.API_PORT);
+  console.log("Running on port ", port);
     MongoClient.connect("mongodb://" + CONNECTION_URL, { useNewUrlParser: true }, (error, client) => {
         if(error) {
             throw error;
