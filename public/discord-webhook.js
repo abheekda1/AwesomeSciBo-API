@@ -83,12 +83,15 @@ function sendRequests() {
     }]
     }`;
     var dbRequest = `{"Difficulty": ${difficulty}, "Category": "${category}", "Subcategory": "${subCategory}", "Tossup Question Format": "${tossupQuestionFormat}", "Tossup Question": "${tossupQuestion}", "Tossup Answer": "${tossupAnswer}", "Bonus Question Format": "${bonusQuestionFormat}", "Bonus Question": "${bonusQuestion}", "Bonus Question Answer": "${bonusAnswer}"}`;
-    if (xhttpDbRequest(dbRequest, apiKey) === 200) {
-      alert("Added to database successfully!");
-      xhttpDiscordRequest(discordRequest);
-    } else {
-      alert("Unable to add to database!");
-    }
+    xhttpDbRequest(dbRequest, apiKey, (error, status, statusText, responseText)  => {
+        if (status === 200) {
+            alert("Added to database successfully!");
+            xhttpDiscordRequest(discordRequest);
+        } else {
+            alert("Something went wrong");
+            alert(`${status} ${statusText}: ${responseText}`);
+        }
+    });
 }
 
 function xhttpDiscordRequest(discordRequest) {
@@ -99,16 +102,19 @@ function xhttpDiscordRequest(discordRequest) {
   xhttp.send(discordRequest);
 }
 
-function xhttpDbRequest(dbRequest, apiKey) {
+function xhttpDbRequest(dbRequest, apiKey, callback) {
   var xhttp = new XMLHttpRequest();
-  var responseStatus;
+  var responseStatus = 0;
+  var responseStatusText;
+  var responseText;
   xhttp.open("POST", "https://meese.lcsrc.org/api/addQuestion", true);
   xhttp.setRequestHeader("Content-Type", "application/json");
   xhttp.setRequestHeader("apikey", apiKey);
   xhttp.onload = function () {
-      alert(xhttp.status + " " + xhttp.statusText + ": " + xhttp.responseText);
       responseStatus = xhttp.status;
+      responseStatusText = xhttp.statusText;
+      responseText = xhttp.responseText;
+      callback(null, xhttp.status, xhttp.statusText, xhttp.responseText);
   };
-  xhttp.send(dbRequest)
-  return responseStatus;
+  xhttp.send(dbRequest);
 }
