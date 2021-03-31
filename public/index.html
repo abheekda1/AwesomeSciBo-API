@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <title>Add Questions | ESS API</title>
+</head>
+<body>
+    <div class="container w-100" style="padding-top: 60px;">
+        <div class="row align-items-center">
+            <h5 class="text-center"><strong>Insert your question here:</strong></h5>
+            <div class="mb-3">
+              <select onchange="toggleSubcategories()" class="form-control" id="category">
+                <option disabled value="">Select a category</option>
+                <option value="Earth">Earth</option>
+                <option value="Space">Space</option>
+              </select><br>
+              <select class="form-select" id="earthSelect">
+                <option disabled value="">Select an Earth subcategory</option>
+                <option value="General">General</option>
+                <option value="Meteorology">Meteorology</option>
+                <option value="Oceanogrophy">Oceanogrophy</option>
+                <option value="Geology">Geology</option>
+              </select><br>
+              <select class="form-select" id="spaceSelect">
+                <option disabled value="">Select a Space subcategory</option>
+                <option value="General">General</option>
+                <option value="Astrophysics">Astrophysics</option>
+                <option value="Cosmology">Cosmology</option>
+              </select><br>
+              <input class="form-control" type="text" placeholder="API Key" id="apiKey"><br>
+              <select class="form-select" id="tossupQuestionFormat">
+                <option disabled value="">Select a format</option>
+                <option value="Short Answer">Short Answer</option>
+                <option value="Multiple Choice">Multiple Choice</option>
+              </select><br>
+              <input class="form-control" type="text" placeholder="Tossup Question" id="tossupQuestion"><br>
+              <input class="form-control" type="text" placeholder="Tossup Answer" id="tossupAnswer"><br>
+              <select class="form-select" id="bonusQuestionFormat">
+                <option value="" disabled>Select a format</option>
+                <option value="Short Answer">Short Answer</option>
+                <option value="Multiple Choice">Multiple Choice</option>
+              </select><br>
+              <input class="form-control" type="text" placeholder="Bonus Question" id="bonusQuestion"><br>
+              <input class="form-control" type="text" placeholder="Bonus Answer" id="bonusAnswer"><br><br>
+              <label for="difficulty">Difficulty slider:</label>
+              <input class="form-range" type="range" id="difficulty" name="difficulty" min="1" max="10">
+<!--              <div class="alert alert-danger" id="missingDataAlert" role="alert">
+                Missing data! Please make sure you've filled in all of the fields.
+</div>-->
+              <div class="align-items-center text-center">
+                  <button type="button" class="btn btn-dark" id="submitQuestion" onclick="sendRequests()">Add!</button>
+              </div>
+            </div>
+          </div>
+    </div>
+    <script type="text/javascript">
+      window.onload = function() {
+        //document.getElementById("submitQuestion").disabled = true;
+        document.getElementById("spaceSelect").style.display = "none";
+        document.getElementById("earthSelect").style.display = "none";
+        var category = document.getElementById("category").value;
+        var spaceSubcategories = document.getElementById("spaceSelect");
+        var earthSubcategories = document.getElementById("earthSelect");
+        if (category == "Space") {
+          spaceSubcategories.style.display = "block";
+          earthSubcategories.style.display = "none";
+        } else {
+          earthSubcategories.style.display = "block";
+          spaceSubcategories.style.display = "none";
+        }
+      }
+
+      function toggleSubcategories() {
+        var category = document.getElementById("category").value;
+        var spaceSubcategories = document.getElementById("spaceSelect");
+        var earthSubcategories = document.getElementById("earthSelect");
+        if (category == "Space") {
+          spaceSubcategories.style.display = "flex";
+          earthSubcategories.style.display = "none";
+        } else {
+          earthSubcategories.style.display = "flex";
+          spaceSubcategories.style.display = "none";
+        }
+      }
+
+      function sendRequests() {
+          var category = document.getElementById("category").value;
+          var apiKey = document.getElementById("apiKey").value;
+          var tossupQuestionFormat = document.getElementById("tossupQuestionFormat").value;
+          var tossupQuestion = document.getElementById("tossupQuestion").value.replace(/w\)/gi, "\\nW)").replace(/x\)/gi, "\\nX)").replace(/y\)/gi, "\\nY)").replace(/z\)/gi, "\\nZ)");
+          var tossupAnswer = document.getElementById("tossupAnswer").value;
+          var bonusQuestionFormat = document.getElementById("bonusQuestionFormat").value;
+          var bonusQuestion = document.getElementById("bonusQuestion").value.replace(/w\)/gi, "\\nW)").replace(/x\)/gi, "\\nX)").replace(/y\)/gi, "\\nY)").replace(/z\)/gi, "\\nZ)");
+          var bonusAnswer = document.getElementById("bonusAnswer").value;
+          var subCategory;
+          var difficulty = document.getElementById("difficulty").value;
+
+          if (category || apiKey|| tossupQuestionFormat == "") {
+
+          }
+
+          if (document.getElementById("spaceSelect").style.display == 'none') {
+            subCategory = document.getElementById("earthSelect").value;
+          } else {
+            subCategory = document.getElementById("spaceSelect").value;
+          }
+
+          var xhttp = new XMLHttpRequest();
+          var discordRequest = `{"username": "Question Additions", "avatar_url": "https://moose.lcsrc.org/servericon.png", "allowed_mentions": { "parse": [] }, "embeds": [{
+          "title": "New question added!",
+          "fields": [
+          {
+            "name": "Difficulty",
+            "value": "${difficulty}"
+          },
+
+          {
+            "name": "Category",
+            "value": "${category}"
+          },
+          {
+            "name": "Subcategory",
+            "value": "${subCategory}"
+          },
+          {
+            "name": "Tossup",
+            "value": "*${tossupQuestionFormat}* - ${tossupQuestion}"
+          },
+          {
+            "name": "Tossup Answer",
+            "value": "${tossupAnswer}"
+          },
+          {
+            "name": "Bonus",
+            "value": "*${bonusQuestionFormat}* - ${bonusQuestion}"
+          },
+          {
+            "name": "Bonus Answer",
+            "value": "${bonusAnswer}"
+          }
+
+          ],
+          "color": "7059711"
+          }]
+          }`;
+          var dbRequest = `{"Difficulty": ${difficulty}, "Category": "${category}", "Subcategory": "${subCategory}", "Tossup Question Format": "${tossupQuestionFormat}", "Tossup Question": "${tossupQuestion}", "Tossup Answer": "${tossupAnswer}", "Bonus Question Format": "${bonusQuestionFormat}", "Bonus Question": "${bonusQuestion}", "Bonus Question Answer": "${bonusAnswer}"}`
+          xhttp.open("POST", "https://discord.com/api/webhooks/826671136971816971/UpO077SVdMyWjfllSREFeFxwVaWYrdIRYtcb4rQCvxy3sYI3UEmiAJWDzTeqKfGIfscb", true);
+          xhttp.setRequestHeader("Content-Type", "application/json");
+          xhttp.send(discordRequest);
+
+          var xhttp = new XMLHttpRequest();
+          xhttp.open("POST", "https://meese.lcsrc.org/api/addQuestion", true);
+          xhttp.setRequestHeader("Content-Type", "application/json");
+          xhttp.setRequestHeader("apikey", apiKey);
+          xhttp.onload = function () {
+              alert(xhttp.status + " " + xhttp.statusText + ": " + xhttp.responseText);
+          };
+          xhttp.send(dbRequest)
+      }
+    </script>
+</body>
+</html>
