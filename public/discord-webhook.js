@@ -102,7 +102,7 @@ function xhttpDiscordRequest(discordRequest) {
 function xhttpDbRequest(dbRequest) {
   var xhttp = new XMLHttpRequest();
   var responseStatus;
-  xhttp.open("POST", "http://localhost:8000/addQuestion", true);
+  xhttp.open("POST", "https://meese.lcsrc.org/api/addQuestion", true);
   xhttp.setRequestHeader("Content-Type", "application/json");
   xhttp.setRequestHeader("apikey", apiKey);
   xhttp.onload = function () {
