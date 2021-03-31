@@ -83,7 +83,7 @@ function sendRequests() {
     }]
     }`;
     var dbRequest = `{"Difficulty": ${difficulty}, "Category": "${category}", "Subcategory": "${subCategory}", "Tossup Question Format": "${tossupQuestionFormat}", "Tossup Question": "${tossupQuestion}", "Tossup Answer": "${tossupAnswer}", "Bonus Question Format": "${bonusQuestionFormat}", "Bonus Question": "${bonusQuestion}", "Bonus Question Answer": "${bonusAnswer}"}`;
-    if (xhttpDbRequest(dbRequest) === 200) {
+    if (xhttpDbRequest(dbRequest, apiKey) === 200) {
       alert("Added to database successfully!");
       xhttpDiscordRequest(discordRequest);
     } else {
@@ -99,7 +99,7 @@ function xhttpDiscordRequest(discordRequest) {
   xhttp.send(discordRequest);
 }
 
-function xhttpDbRequest(dbRequest) {
+function xhttpDbRequest(dbRequest, apiKey) {
   var xhttp = new XMLHttpRequest();
   var responseStatus;
   xhttp.open("POST", "https://meese.lcsrc.org/api/addQuestion", true);
