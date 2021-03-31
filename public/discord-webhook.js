@@ -29,6 +29,7 @@ function toggleSubcategories() {
 
 function sendRequests() {
     var category = document.getElementById("category").value;
+    var author = document.getElementById("author").value;
     var apiKey = document.getElementById("apiKey").value;
     var tossupQuestionFormat = document.getElementById("tossupQuestionFormat").value;
     var tossupQuestion = document.getElementById("tossupQuestion").value.replace(/w\)/gi, "\\nW)").replace(/x\)/gi, "\\nX)").replace(/y\)/gi, "\\nY)").replace(/z\)/gi, "\\nZ)");
@@ -82,7 +83,7 @@ function sendRequests() {
     "color": "7059711"
     }]
     }`;
-    var dbRequest = `{"Difficulty": ${difficulty}, "Category": "${category}", "Subcategory": "${subCategory}", "Tossup Question Format": "${tossupQuestionFormat}", "Tossup Question": "${tossupQuestion}", "Tossup Answer": "${tossupAnswer}", "Bonus Question Format": "${bonusQuestionFormat}", "Bonus Question": "${bonusQuestion}", "Bonus Question Answer": "${bonusAnswer}"}`;
+    var dbRequest = `{"Author": "${author}", "Difficulty": ${difficulty}, "Category": "${category}", "Subcategory": "${subCategory}", "Tossup Question Format": "${tossupQuestionFormat}", "Tossup Question": "${tossupQuestion}", "Tossup Answer": "${tossupAnswer}", "Bonus Question Format": "${bonusQuestionFormat}", "Bonus Question": "${bonusQuestion}", "Bonus Question Answer": "${bonusAnswer}"}`;
     xhttpDbRequest(dbRequest, apiKey, (error, status, statusText, responseText)  => {
         if (status === 200) {
             alert("Added to database successfully!");
