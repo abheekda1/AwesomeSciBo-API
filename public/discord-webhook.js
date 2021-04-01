@@ -50,6 +50,10 @@ function sendRequests() {
     "title": "New question added!",
     "fields": [
     {
+      "name": "Author",
+      "value": "${author}"
+    },
+    {
       "name": "Difficulty",
       "value": "${difficulty}"
     },
