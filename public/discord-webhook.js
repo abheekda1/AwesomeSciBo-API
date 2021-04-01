@@ -92,7 +92,7 @@ function sendRequests() {
     "timestamp": "${new Date().toISOString()}"
     }]
     }`;
-    var dbRequest = `{"Author": "${author}", "Difficulty": ${difficulty}, "Category": "${category}", "Subcategory": "${subCategory}", "Tossup Question Format": "${tossupQuestionFormat}", "Tossup Question": "${tossupQuestion}", "Tossup Answer": "${tossupAnswer}", "Bonus Question Format": "${bonusQuestionFormat}", "Bonus Question": "${bonusQuestion}", "Bonus Question Answer": "${bonusAnswer}", "Explanation": "${explanation}"}`;
+    var dbRequest = `{"Timestamp": "${new Date().toISOString()}", "Author": "${author}", "Difficulty": ${difficulty}, "Category": "${category}", "Subcategory": "${subCategory}", "Tossup Question Format": "${tossupQuestionFormat}", "Tossup Question": "${tossupQuestion}", "Tossup Answer": "${tossupAnswer}", "Bonus Question Format": "${bonusQuestionFormat}", "Bonus Question": "${bonusQuestion}", "Bonus Question Answer": "${bonusAnswer}", "Explanation": "${explanation}"}`;
     xhttpDbRequest(dbRequest, apiKey, (error, status, statusText, responseText)  => {
         if (status === 200) {
             alert("Added to database successfully!");
