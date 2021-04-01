@@ -108,6 +108,6 @@ app.get("/questions/:id", (request, response) => {
       if(error) {
           return response.status(500).send(error);
       }
-      response.send(result[Math.floor(Math.random() * result.length)]);
+      response.send(result);
   });
 });
