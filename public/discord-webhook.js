@@ -32,12 +32,13 @@ function sendRequests() {
     var author = document.getElementById("author").value;
     var apiKey = document.getElementById("apiKey").value;
     var tossupQuestionFormat = document.getElementById("tossupQuestionFormat").value;
-    var tossupQuestion = document.getElementById("tossupQuestion").value.replace(/w\)/gi, "\\nW)").replace(/x\)/gi, "\\nX)").replace(/y\)/gi, "\\nY)").replace(/z\)/gi, "\\nZ)");
+    var tossupQuestion = document.getElementById("tossupQuestion").value.replace(/w\)/gi, "\\nW)").replace(/x\)/gi, "\\nX)").replace(/y\)/gi, "\\nY)").replace(/z\)/gi, "\\nZ)").trim();
     var tossupAnswer = document.getElementById("tossupAnswer").value;
     var bonusQuestionFormat = document.getElementById("bonusQuestionFormat").value;
-    var bonusQuestion = document.getElementById("bonusQuestion").value.replace(/w\)/gi, "\\nW)").replace(/x\)/gi, "\\nX)").replace(/y\)/gi, "\\nY)").replace(/z\)/gi, "\\nZ)");
+    var bonusQuestion = document.getElementById("bonusQuestion").value.replace(/w\)/gi, "\\nW)").replace(/x\)/gi, "\\nX)").replace(/y\)/gi, "\\nY)").replace(/z\)/gi, "\\nZ)").trim();
     var bonusAnswer = document.getElementById("bonusAnswer").value;
     var subCategory;
+    var explanation = document.getElementById("explanation").value;
     var difficulty = document.getElementById("difficulty").value;
 
     if (document.getElementById("spaceSelect").style.display == 'none') {
@@ -49,6 +50,10 @@ function sendRequests() {
     var discordRequest = `{"username": "Question Additions", "avatar_url": "https://moose.lcsrc.org/servericon.png", "allowed_mentions": { "parse": [] }, "embeds": [{
     "title": "New question added!",
     "fields": [
+    {
+      "name": "Author",
+      "value": "${author}"
+    },
     {
       "name": "Difficulty",
       "value": "${difficulty}"
@@ -77,13 +82,17 @@ function sendRequests() {
     {
       "name": "Bonus Answer",
       "value": "${bonusAnswer}"
+    },
+    {
+      "name": "Explanation",
+      "value": "${explanation}"
     }
-
     ],
-    "color": "7059711"
+    "color": "7059711",
+    "timestamp": "${new Date().toISOString()}"
     }]
     }`;
-    var dbRequest = `{"Author": "${author}", "Difficulty": ${difficulty}, "Category": "${category}", "Subcategory": "${subCategory}", "Tossup Question Format": "${tossupQuestionFormat}", "Tossup Question": "${tossupQuestion}", "Tossup Answer": "${tossupAnswer}", "Bonus Question Format": "${bonusQuestionFormat}", "Bonus Question": "${bonusQuestion}", "Bonus Question Answer": "${bonusAnswer}"}`;
+    var dbRequest = `{"Timestamp": "${new Date().toISOString()}", "Author": "${author}", "Difficulty": ${difficulty}, "Category": "${category}", "Subcategory": "${subCategory}", "Tossup Question Format": "${tossupQuestionFormat}", "Tossup Question": "${tossupQuestion}", "Tossup Answer": "${tossupAnswer}", "Bonus Question Format": "${bonusQuestionFormat}", "Bonus Question": "${bonusQuestion}", "Bonus Question Answer": "${bonusAnswer}", "Explanation": "${explanation}"}`;
     xhttpDbRequest(dbRequest, apiKey, (error, status, statusText, responseText)  => {
         if (status === 200) {
             alert("Added to database successfully!");
