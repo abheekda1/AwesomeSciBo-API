@@ -104,7 +104,7 @@ app.get("/questions/random", (request, response) => {
 });
 
 app.get("/questions/:id", (request, response) => {
-  collection.findOne( { "_id": new ObjectID(request.params.id) } ).toArray((error, result) => {
+  collection.findOne( { "_id": new ObjectID(request.params.id) }, (error, result) => {
       if(error) {
           return response.status(500).send(error);
       }
