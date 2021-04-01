@@ -101,3 +101,12 @@ app.get("/questions/random", (request, response) => {
         response.send(result[Math.floor(Math.random() * result.length)]);
     });
 });
+
+app.get("/questions/:id", (request, response) => {
+  collection.findOne( { "_id": new ObjectID(request.params.id) } ).toArray((error, result) => {
+      if(error) {
+          return response.status(500).send(error);
+      }
+      response.send(result[Math.floor(Math.random() * result.length)]);
+  });
+});
