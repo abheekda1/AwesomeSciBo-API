@@ -38,6 +38,7 @@ function sendRequests() {
     var bonusQuestion = document.getElementById("bonusQuestion").value.replace(/w\)/gi, "\\nW)").replace(/x\)/gi, "\\nX)").replace(/y\)/gi, "\\nY)").replace(/z\)/gi, "\\nZ)");
     var bonusAnswer = document.getElementById("bonusAnswer").value;
     var subCategory;
+    var explanation = document.getElementById("explanation").value;
     var difficulty = document.getElementById("difficulty").value;
 
     if (document.getElementById("spaceSelect").style.display == 'none') {
@@ -81,13 +82,16 @@ function sendRequests() {
     {
       "name": "Bonus Answer",
       "value": "${bonusAnswer}"
+    },
+    {
+      "name": "Explanation",
+      "value": "${explanation}"
     }
-
     ],
     "color": "7059711"
     }]
     }`;
-    var dbRequest = `{"Author": "${author}", "Difficulty": ${difficulty}, "Category": "${category}", "Subcategory": "${subCategory}", "Tossup Question Format": "${tossupQuestionFormat}", "Tossup Question": "${tossupQuestion}", "Tossup Answer": "${tossupAnswer}", "Bonus Question Format": "${bonusQuestionFormat}", "Bonus Question": "${bonusQuestion}", "Bonus Question Answer": "${bonusAnswer}"}`;
+    var dbRequest = `{"Author": "${author}", "Difficulty": ${difficulty}, "Category": "${category}", "Subcategory": "${subCategory}", "Tossup Question Format": "${tossupQuestionFormat}", "Tossup Question": "${tossupQuestion}", "Tossup Answer": "${tossupAnswer}", "Bonus Question Format": "${bonusQuestionFormat}", "Bonus Question": "${bonusQuestion}", "Bonus Question Answer": "${bonusAnswer}", "Explanation": "${explanation}"}`;
     xhttpDbRequest(dbRequest, apiKey, (error, status, statusText, responseText)  => {
         if (status === 200) {
             alert("Added to database successfully!");
