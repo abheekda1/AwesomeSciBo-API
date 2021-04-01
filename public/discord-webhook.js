@@ -32,10 +32,10 @@ function sendRequests() {
     var author = document.getElementById("author").value;
     var apiKey = document.getElementById("apiKey").value;
     var tossupQuestionFormat = document.getElementById("tossupQuestionFormat").value;
-    var tossupQuestion = document.getElementById("tossupQuestion").value.replace(/w\)/gi, "\\nW)").replace(/x\)/gi, "\\nX)").replace(/y\)/gi, "\\nY)").replace(/z\)/gi, "\\nZ)");
+    var tossupQuestion = document.getElementById("tossupQuestion").value.replace(/w\)/gi, "\\nW)").replace(/x\)/gi, "\\nX)").replace(/y\)/gi, "\\nY)").replace(/z\)/gi, "\\nZ)").trim();
     var tossupAnswer = document.getElementById("tossupAnswer").value;
     var bonusQuestionFormat = document.getElementById("bonusQuestionFormat").value;
-    var bonusQuestion = document.getElementById("bonusQuestion").value.replace(/w\)/gi, "\\nW)").replace(/x\)/gi, "\\nX)").replace(/y\)/gi, "\\nY)").replace(/z\)/gi, "\\nZ)");
+    var bonusQuestion = document.getElementById("bonusQuestion").value.replace(/w\)/gi, "\\nW)").replace(/x\)/gi, "\\nX)").replace(/y\)/gi, "\\nY)").replace(/z\)/gi, "\\nZ)").trim();
     var bonusAnswer = document.getElementById("bonusAnswer").value;
     var subCategory;
     var explanation = document.getElementById("explanation").value;
