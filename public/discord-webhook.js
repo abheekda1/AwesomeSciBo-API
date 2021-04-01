@@ -88,7 +88,8 @@ function sendRequests() {
       "value": "${explanation}"
     }
     ],
-    "color": "7059711"
+    "color": "7059711",
+    "timestamp": "${new Date.toISOString()}"
     }]
     }`;
     var dbRequest = `{"Author": "${author}", "Difficulty": ${difficulty}, "Category": "${category}", "Subcategory": "${subCategory}", "Tossup Question Format": "${tossupQuestionFormat}", "Tossup Question": "${tossupQuestion}", "Tossup Answer": "${tossupAnswer}", "Bonus Question Format": "${bonusQuestionFormat}", "Bonus Question": "${bonusQuestion}", "Bonus Question Answer": "${bonusAnswer}", "Explanation": "${explanation}"}`;
