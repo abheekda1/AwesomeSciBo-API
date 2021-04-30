@@ -93,7 +93,7 @@ app.post("/req-api-key", async (req, res) => {
     apiKeyData['Valid'] = true;
     const apiKey = new APIKeys(apiKeyData);
     await transporter.sendMail({
-      from: '"Abheek D" <abheekd@adawesome.tech>',
+      from: '"Your Name" <youremail@example.com>',
       to: req.body['Email'],
       subject: "API Key",
       text: generatedAPIKey,
