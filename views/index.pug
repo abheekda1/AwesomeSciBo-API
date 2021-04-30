@@ -1,0 +1,127 @@
+doctype html
+head
+  title Add Questions | ESS API
+  style
+    include styles/style.css
+body
+  div.container.w-100
+    div.row.text-align-center.mt-3
+      div(id="missing-content-alert" role="alert").alert.alert-danger.alert-dismissible.fade.d-none.text-justify
+        span#missing-content-alert-text
+        button(type="button" data-dismiss="alert" aria-label="Close").close
+          span.text-right &times;
+      h5.text-center.mt-1.display-5 Insert Your Question Here:
+      div.mb-3
+        form(method=requestInfo.method action=requestInfo.endpoint)
+          select(id="category" name="category").form-select.mb-3.mt-3
+            option(selected="selected" disabled value="") Select a category
+            each category in categories
+              option(value=category.name)= category.name
+          each category in categories
+            select(id=category.name name=category.name).form-select.my-3
+              option(selected="selected" disabled value="") Select a subcategory in #{category.name}
+              each subcategory in category.subcategories
+                option(value=subcategory id=subcategory)= subcategory
+          select#tossupQuestionFormat.form-select.my-3
+            option(selected="selected" disabled value="") Select a toss-up format
+            option(value="Short Answer") Short Answer
+            option(value="Multiple Choice") Multiple Choice            
+          input(type="text" placeholder="Toss-Up Question")#tossupQuestion.form-control.my-3
+          input(type="text" placeholder="Toss-Up Answer")#tossupAnswer.form-control.my-3
+          select#bonusQuestionFormat.form-select.my-3
+            option(selected="selected" disabled value="") Select a bonus format
+            option(value="Short Answer") Short Answer
+            option(value="Multiple Choice") Multiple Choice            
+          input(type="text" placeholder="Bonus Question")#bonusQuestion.form-control.my-3
+          input(type="text" placeholder="Bonus Answer")#bonusAnswer.form-control.my-3
+          div.input-group.mb-3
+            input(type="text" placeholder="API Key")#apiKey.form-control
+            div.input-group-append
+              input(type="submit" value="Submit").btn.btn-secondary
+  script.
+    //console.log(questionData);
+    const categoryList = !{JSON.stringify(categories)};
+    const category = document.getElementById("category");
+    
+    window.onload = () => {
+      if (!{JSON.stringify(questionData)}.category) {
+        const question = !{JSON.stringify(questionData)};
+        let catIndex;
+        let subcatIndex;
+        
+        catIndex = categoryList.findIndex( element => {
+          if (element.name === question.category) {
+            return true;
+          }
+        });
+        
+        categoryList.some(cat => {
+          if (cat.name === question.category) {
+            subcatIndex = cat.subcategories.indexOf(question.subcategory);
+            return true;
+          } else {
+            return false;
+          }
+        });
+        
+        category.selectedIndex = catIndex + 1;
+        
+        console.log(question.category);
+        document.getElementById(question.category).selectedIndex = subcatIndex + 1;
+      }
+      
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.has("updateNotFound")) {
+        if (urlParams.get("updateNotFound")) {
+          alert("Unfortunately, we couldn't find the question you were looking to update")
+          window.history.replaceState({}, document.title, "/");
+        }
+      }
+      if (urlParams.has("missing")) {
+        const missingElements = urlParams.get("missing").split(",").join(", ");
+        document.getElementById("missing-content-alert-text").innerHTML = `Error: You were missing these value: <strong>${missingElements}</strong>`;
+        document.getElementById("missing-content-alert").classList.remove("d-none");
+        document.getElementById("missing-content-alert").classList.add("show");
+        window.history.replaceState({}, document.title, "/");
+      }
+      
+      const toggledCategory = document.getElementById(category.value);
+      if (!toggledCategory) {
+        categoryList.forEach(c => {
+          document.getElementById(c.name).classList.remove("d-flex");
+          document.getElementById(c.name).classList.remove("d-none");
+          document.getElementById(c.name).classList.add("d-none");
+          });
+      } else {
+        categoryList.forEach(c => {
+          if (c.name !== category.value) {
+            document.getElementById(c.name).classList.remove("d-flex");
+            document.getElementById(c.name).classList.remove("d-none");
+            document.getElementById(c.name).classList.add("d-none");
+            toggledCategory.classList.remove("d-flex");
+            toggledCategory.classList.remove("d-none");
+            toggledCategory.classList.add("d-flex");
+            console.log(c.name);
+          }
+        });
+      }
+    }
+    category.onchange = () => {
+      const toggledCategory = document.getElementById(category.value);
+      console.log(toggledCategory.style.display);
+      toggledCategory.classList.remove("d-flex");
+      toggledCategory.classList.remove("d-none");
+      toggledCategory.classList.add("d-flex");
+      categoryList.forEach(c => {
+        if (c.name !== category.value) {
+          document.getElementById(c.name).classList.remove("d-flex");
+          document.getElementById(c.name).classList.remove("d-none");
+          document.getElementById(c.name).classList.add("d-none");
+          document.getElementById(c.name).removeAttribute("name");
+          console.log(c.name);
+        }
+      });
+    }
+  script(src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous")
+  script(src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous")
+  script(src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous")

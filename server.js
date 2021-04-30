@@ -1,7 +1,7 @@
 const express = require('express');
-const MongoClient = require('mongodb').MongoClient;
-const ObjectID = require('mongodb').ObjectID;
+const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const categories = require("./categories.json");
 
 const app = express();
 app.use(bodyParser.json());
@@ -10,33 +10,156 @@ var database, collection;
 const port = process.env.API_PORT;
 
 const DATABASE_NAME = process.env.DATABASE_NAME;
-const CONNECTION_URL = "localhost:27017"
+const CONNECTION_URL = `mongodb://localhost/${DATABASE_NAME}`;
+const Schema = mongoose.Schema;
+
+const categoryNames = [];
+categories.forEach(category => {
+  categoryNames.push(category.name);
+});
+
+const subCategoryNames = [];
+categories.forEach(category => {
+  category.subcategories.forEach(subcategory => {
+    subCategoryNames.push(subcategory);
+  });
+});
+
+const QuestionsSchema = new Schema({
+  category: {
+    type: String,
+    enum: categoryNames
+  },
+  subcategory: {
+    type: String,
+    enum:subCategoryNames
+  }
+});
+
+var Questions = mongoose.model('Questions', QuestionsSchema);
 
 app.listen(process.env.API_PORT || 8000, () => {
   console.log("Running on port ", port);
-    MongoClient.connect("mongodb://" + CONNECTION_URL, { useNewUrlParser: true }, (error, client) => {
-        if(error) {
-            throw error;
-        }
-        database = client.db(DATABASE_NAME);
-        collection = database.collection("questions");
-        console.log("Connected to `" + DATABASE_NAME + "`!");
+    mongoose.connect(CONNECTION_URL, {useNewUrlParser: true, useUnifiedTopology: true}, (error, client) => {
+      if (error) throw error;
     });
+  });
+
+app.set('view engine', 'pug');
+
+app.get("/", async (req, res) => {
+  res.render('index', { categories: categories, questionData: {}, requestInfo: { method: "POST", endpoint: `/addQuestion` } })
 });
 
-app.use("/", express.static("public"));
+app.get("/questions/:id/update", (request, response) => {
+  Questions.findOne( { "_id": new mongoose.Types.ObjectId(request.params.id) }, (error, result) => {
+      if(error) {
+          return response.status(500).send(error);
+      }
+
+      let questionJSON;
+
+      if (result) {
+        questionJSON = result;
+        console.log(questionJSON);
+        response.render('index', { categories: categories, questionData: questionJSON, requestInfo: { method: "POST", endpoint: `/questions/${request.params.id}/update` } });
+      } else {
+        response.redirect('/?updateNotFound=true')
+      }
+  });
+});
+
+app.post("/questions/:id/update", (request, response) => {
+  const qJSON = { "category": request.body.category, "subcategory": request.body[request.body.category]};
+  console.log(qJSON);
+  let responseJSON = {};
+  let subcategories;
+
+  categories.some(category => {
+    if (qJSON.category === category.name) {
+      subcategories = category.subcategories;
+      return true;
+    } else {
+      return false;
+    }
+  })
+  if (categoryNames.includes(qJSON.category)) {
+    if (subcategories.includes(qJSON.subcategory)) {
+      responseJSON.subcategory = "ok";
+      responseJSON.category = "ok";
+    } else {
+      responseJSON.category = "ok";
+      responseJSON.subcategory = "invalid";
+    }
+  } else {
+    responseJSON.category = "invalid";
+    responseJSON.subcategory = "invalid";
+  }
+
+  let statusArray = [];
+
+  for (var key in responseJSON) {
+    const value = responseJSON[key];
+    statusArray.push(value);
+  }
+
+  if (statusArray.includes("invalid")) {
+    return response.status(400).send(responseJSON);
+  } else {
+    Questions.findByIdAndUpdate(request.params.id, qJSON, function (err) {
+      if (err) {
+        return response.status(500).send(err);
+      }
+      response.status(200).redirect("/");
+    });
+  }
+});
 
 app.post("/addQuestion", (request, response) => {
-    if (request.headers.apikey !== process.env.API_KEY) {
-      response.status(403).send("Invalid API Key");
-      return;
+  const qJSON = { "category": request.body.category, "subcategory": request.body[request.body.category]};
+  console.log(qJSON);
+  const question = new Questions(qJSON);
+  let responseJSON = {};
+  let subcategories;
+
+  categories.some(category => {
+    if (qJSON.category === category.name) {
+      subcategories = category.subcategories;
+      return true;
+    } else {
+      return false;
     }
-    collection.insertOne(request.body, (error, result) => {
-        if(error) {
-            return response.status(500).send(error);
-        }
-        response.send(result.result);
+  })
+  if (categoryNames.includes(qJSON.category)) {
+    if (subcategories.includes(qJSON.subcategory)) {
+      responseJSON.subcategory = "ok";
+      responseJSON.category = "ok";
+    } else {
+      responseJSON.category = "ok";
+      responseJSON.subcategory = "invalid";
+    }
+  } else {
+    responseJSON.category = "invalid";
+    responseJSON.subcategory = "invalid";
+  }
+
+  let statusArray = [];
+
+  for (var key in responseJSON) {
+    const value = responseJSON[key];
+    statusArray.push(value);
+  }
+
+  if (statusArray.includes("invalid")) {
+    return response.status(400).send(responseJSON);
+  } else {
+    question.save(function (err) {
+      if (err) {
+        return response.status(500).send(err);
+      }
+      response.status(200).redirect("/");
     });
+  }
 });
 
 app.get("/questions", (request, response) => {
@@ -63,7 +186,7 @@ app.get("/questions", (request, response) => {
 
     jsonQuery = jsonQuery.substring(0, jsonQuery.length-1);
     jsonQuery += " }";
-    collection.find(JSON.parse(jsonQuery)).toArray((error, result) => {
+    Questions.find(JSON.parse(jsonQuery), (error, result) => {
         if(error) {
             return response.status(500).send(error);
         }
@@ -71,7 +194,7 @@ app.get("/questions", (request, response) => {
     });
 });
 
-app.get("/questions/random", (request, response) => {
+/*app.get("/questions/random", (request, response) => {
     let jsonQuery = "{ ";
 
     if (request.query.category) {
@@ -95,16 +218,15 @@ app.get("/questions/random", (request, response) => {
 
     jsonQuery = jsonQuery.substring(0, jsonQuery.length-1);
     jsonQuery += " }";
-    collection.find(JSON.parse(jsonQuery)).toArray((error, result) => {
+    Questions.find(JSON.parse(jsonQuery), (error, result) => {
         if(error) {
             return response.status(500).send(error);
         }
         response.send(result[Math.floor(Math.random() * result.length)]);
     });
-});
-
+});*/
 app.get("/questions/:id", (request, response) => {
-  collection.findOne( { "_id": new ObjectID(request.params.id) }, (error, result) => {
+  Questions.findOne( { "_id": new mongoose.Types.ObjectId(request.params.id) }, (error, result) => {
       if(error) {
           return response.status(500).send(error);
       }

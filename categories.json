@@ -1,0 +1,29 @@
+[
+  {
+    "name": "Earth",
+    "subcategories": [
+      "General",
+      "Meteorology",
+      "Oceanography",
+      "Geology"
+    ]
+  },
+  {
+    "name": "Space",
+    "subcategories": [
+      "General",
+      "Astrophysics",
+      "Cosmology",
+      "Planetary Astronomy"
+    ]
+  },
+  {
+    "name": "Physics",
+    "subcategories": [
+      "Kinematics",
+      "Rotational Motion",
+      "Simple Harmonic Motion",
+      "Electrostatics"
+    ]
+  }
+]
