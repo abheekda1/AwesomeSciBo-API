@@ -1,6 +1,6 @@
 doctype html
 head
-  title Add Questions | ESS API
+  title #{title} Question | AwesomeSciBo API
   style
     include styles/style.css
   script(src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous")
@@ -11,7 +11,7 @@ body
   div.container.w-100
     div.row.mt-3
       div(id="missing-content-alert" role="alert").alert.alert-danger.d-none Hello!
-      h5.text-center.mt-1.display-5 Insert Your Question Here:
+      h5.text-center.mt-1.display-5 #{title} Your Question Here:
       div.mb-3.text-align-center
         form(method=requestInfo.method action=requestInfo.endpoint)
           select(id="category" name="Category" required).form-select.mb-3.mt-3

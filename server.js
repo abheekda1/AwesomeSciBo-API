@@ -76,7 +76,7 @@ const transporter = nodemailer.createTransport(emailData);
 app.set('view engine', 'pug');
 
 app.get("/questions/add", async (req, res) => {
-  res.render('index', { categories: categories, questionData: {}, requestInfo: { method: "POST", endpoint: `/questions/add` } })
+  res.render('index', { categories: categories, questionData: {}, requestInfo: { method: "POST", endpoint: `/questions/add` }, title: "Add" })
 });
 
 app.post("/req-api-key", async (req, res) => {
@@ -120,7 +120,7 @@ app.get("/questions/:id/update", (request, response) => {
       if (result) {
         questionJSON = result;
         console.log(questionJSON);
-        response.render('index', { categories: categories, questionData: questionJSON, requestInfo: { method: "POST", endpoint: `/questions/${request.params.id}/update` } });
+        response.render('index', { categories: categories, questionData: questionJSON, requestInfo: { method: "POST", endpoint: `/questions/${request.params.id}/update` }, title: "Update" });
       } else {
         response.redirect('/?updateNotFound=true')
       }
