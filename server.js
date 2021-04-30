@@ -75,7 +75,7 @@ const transporter = nodemailer.createTransport(emailData);
 
 app.set('view engine', 'pug');
 
-app.get("/", async (req, res) => {
+app.get("/questions/add", async (req, res) => {
   res.render('index', { categories: categories, questionData: {}, requestInfo: { method: "POST", endpoint: `/questions/add` } })
 });
 
