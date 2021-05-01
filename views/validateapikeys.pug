@@ -1,0 +1,47 @@
+doctype html
+head
+  title Add API Key | AwesomeSciBo API
+  style
+    include styles/style.css
+  script(src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous")
+  script(src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous")
+  script(src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous")
+
+body
+  div.container.w-100
+    div.row.mt-3
+    h5.text-center.mt-1.display-5 Add An API Key Here:
+    div.mb-3.text-align-center
+      form(method="POST" action="/val-api-keys")#verificationForm
+        div.input-group.my-3
+          input(type="text" name="Master API Key" placeholder="Master API Key" required)#masterapikey.form-control
+          div.input-group-append
+            input(type="submit" value="Submit").btn.btn-primary
+      table.table
+        thead
+          tr
+            th(scope="col") E-mail
+            th(scope="col") API Key
+            th(scope="col") Valid
+        tbody
+          each apiKey in apiKeyData
+            tr
+              td= apiKey['Email']
+              td= apiKey['API Key']
+              td  
+                form(method="POST" action="/")
+                  input(type="submit", value=apiKey['Valid'] ? 'true' : 'false').btn.btn-primary
+      
+
+  script.
+    window.onload = () => {
+      let apiKeys;
+      let masterKey;
+      if(!{JSON.stringify(apiKeyData)}.length > 0) {
+        apiKeys = !{JSON.stringify(apiKeyData)};
+        document.getElementById('verificationForm').remove();
+      }
+      if(!{JSON.stringify(masterAPIKey)}.length > 0) {
+        masterKey = !{JSON.stringify(masterAPIKey)};
+      }
+    }

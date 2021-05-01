@@ -80,6 +80,37 @@ app.get("/", async (req, res) => {
   res.render('index');
 })
 
+app.get("/val-api-keys", async (req, res) => {
+  res.render('validateapikeys', { apiKeyData: [] });
+})
+
+app.post("/val-api-keys", async (req, res) => {
+  if (req.body['Master API Key']) {
+    if (req.body['Master API Key'] === process.env.MASTER_API_KEY) {
+      await APIKeys.find({}, async (error, result) => {
+        if (error) {
+          return res.status(500).send(err);
+        }
+        return res.status(200).render('validateapikeys', { masterAPIKey: req.body['Master API Key'], apiKeyData: result });
+      });
+    } else {
+      return res.status(401);
+    }
+  } else {
+
+  }
+  /*if (req.body['Master API Key'] === process.env.MASTER_API_KEY) {
+    await APIKeys.find({}, async (error, result) => {
+      if (error) {
+        return res.status(500).send(err);
+      }
+      return res.status(200);
+    });
+  } else {
+    return res.status(401);
+  }*/
+});
+
 app.get("/questions/add", async (req, res) => {
   res.render('question', { categories: categories, questionData: {}, requestInfo: { method: "POST", endpoint: `/questions/add` }, title: "Add" });
 });
@@ -90,30 +121,34 @@ app.get("/req-api-key", async (req, res) => {
 
 app.post("/req-api-key", async (req, res) => {
   console.log(req.body);
-  if (req.body['Master API Key'] !== process.env.MASTER_API_KEY) {
-    return res.status(401).send("Invalid API Key");
-  } else if (!req.body['Email']) {
+  if (!req.body['Email']) {
     return rest.status(400).send("Missing E-mail");
   } else {
-    const generatedAPIKey = uuid();
-    const apiKeyData = {};
-    apiKeyData['Email'] = req.body['Email'];
-    apiKeyData['API Key'] = generatedAPIKey;
-    apiKeyData['Valid'] = true;
-    const apiKey = new APIKeys(apiKeyData);
-    await transporter.sendMail({
-      from: `"${emailData.from.name}" <${emailData.from.email}>`,
-      to: req.body['Email'],
-      subject: "API Key",
-      text: generatedAPIKey,
-    })
-    .then(info => {
-      apiKey.save(function (err) {
-        if (err) {
-          return response.status(500).send(err);
-        }
-      });
-      res.status(200).send("Message ID: " + info.messageId);
+    APIKeys.findOne({ Email: req.body['Email'] }, async (error, result) => {
+      if (!result) {
+        const generatedAPIKey = uuid();
+        const apiKeyData = {};
+        apiKeyData['Email'] = req.body['Email'];
+        apiKeyData['API Key'] = generatedAPIKey;
+        apiKeyData['Valid'] = false;
+        const apiKey = new APIKeys(apiKeyData);
+        await transporter.sendMail({
+          from: `"${emailData.from.name}" <${emailData.from.email}>`,
+          to: req.body['Email'],
+          subject: "API Key",
+          text: generatedAPIKey,
+        })
+        .then(info => {
+          apiKey.save(function (err) {
+            if (err) {
+              return response.status(500).send(err);
+            }
+          });
+          res.status(200).send("Message ID: " + info.messageId);
+        });
+      } else {
+        return res.status(400).send('E-mail already has API key');
+      }
     });
   }
 });
@@ -349,7 +384,7 @@ app.get("/questions/:id", (request, response) => {
       if(error) {
           return response.status(500).send(error);
       }
-      response.send(result);
+      return response.send(result);
   });
 });
 
