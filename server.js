@@ -51,7 +51,8 @@ const QuestionsSchema = new Schema({
   'Bonus Question': String,
   'Bonus Answer': String,
   'Explanation': String,
-  'Submitter': String
+  'Submitter': String,
+  'Timestamp': String
 });
 
 const Questions = mongoose.model('Questions', QuestionsSchema);
@@ -220,7 +221,7 @@ app.post("/questions/add", async (request, response) => {
   await APIKeys.findOne( { "API Key": apiKey.toLowerCase() }, (error, result) => {
     if (result) {
       qJSON['Submitter'] = result['Email'];
-      qJSON['Timestamp'] = new Date.now().toISOString();
+      qJSON['Timestamp'] = new Date().toISOString();
     } else {
       return response.status(401).redirect(`/questions/${request.params.id}/update/?missing=a valid API key`);
     }
