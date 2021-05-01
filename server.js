@@ -77,7 +77,11 @@ const transporter = nodemailer.createTransport(emailData.smtp);
 app.set('view engine', 'pug');
 
 app.get("/questions/add", async (req, res) => {
-  res.render('question', { categories: categories, questionData: {}, requestInfo: { method: "POST", endpoint: `/questions/add` }, title: "Add" })
+  res.render('question', { categories: categories, questionData: {}, requestInfo: { method: "POST", endpoint: `/questions/add` }, title: "Add" });
+});
+
+app.get("/req-api-key", async (req, res) => {
+  res.render('apikey');
 });
 
 app.post("/req-api-key", async (req, res) => {
