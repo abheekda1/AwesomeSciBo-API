@@ -1,9 +1,15 @@
 {
-  "host": "",
-  "port": ,
-  "secure": ,
-  "auth": {
-    "user": "",
-    "pass": ""
+  "smtp": {
+    "host": "<your email host here>",
+    "port": 587,
+    "secure": false,
+    "auth": {
+      "user": "<your email username here>",
+      "pass": "<your email password here>"
+    }
+  },
+  "from": {
+    "name": "<sender name>",
+    "email": "<sender email>"
   }
 }

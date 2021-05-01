@@ -71,7 +71,7 @@ app.listen(process.env.API_PORT || 8000, () => {
     });
   });
 
-const transporter = nodemailer.createTransport(emailData);
+const transporter = nodemailer.createTransport(emailData.smtp);
 
 app.set('view engine', 'pug');
 
@@ -93,7 +93,7 @@ app.post("/req-api-key", async (req, res) => {
     apiKeyData['Valid'] = true;
     const apiKey = new APIKeys(apiKeyData);
     await transporter.sendMail({
-      from: '"Your Name" <youremail@example.com>',
+      from: `"${emailData.from.name}" <${emailData.from.email}>`,
       to: req.body['Email'],
       subject: "API Key",
       text: generatedAPIKey,
