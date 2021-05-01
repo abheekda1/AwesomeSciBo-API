@@ -76,7 +76,7 @@ const transporter = nodemailer.createTransport(emailData);
 app.set('view engine', 'pug');
 
 app.get("/questions/add", async (req, res) => {
-  res.render('index', { categories: categories, questionData: {}, requestInfo: { method: "POST", endpoint: `/questions/add` }, title: "Add" })
+  res.render('question', { categories: categories, questionData: {}, requestInfo: { method: "POST", endpoint: `/questions/add` }, title: "Add" })
 });
 
 app.post("/req-api-key", async (req, res) => {
@@ -120,9 +120,9 @@ app.get("/questions/:id/update", (request, response) => {
       if (result) {
         questionJSON = result;
         console.log(questionJSON);
-        response.render('index', { categories: categories, questionData: questionJSON, requestInfo: { method: "POST", endpoint: `/questions/${request.params.id}/update` }, title: "Update" });
+        response.render('question', { categories: categories, questionData: questionJSON, requestInfo: { method: "POST", endpoint: `/questions/${request.params.id}/update` }, title: "Update" });
       } else {
-        response.redirect('/?updateNotFound=true')
+        response.redirect('/questions/add?updateNotFound=true')
       }
   });
 });
@@ -199,8 +199,6 @@ app.post("/questions/:id/update", async (request, response) => {
 });
 
 app.post("/questions/add", async (request, response) => {
-  //const qJSON = { "category": request.body.category, "subcategory": request.body[request.body.category]};
-  //console.log(qJSON);
   const apiKey = request.body['API Key'];
   const qJSON = request.body;
   qJSON['Toss-Up Question'] = qJSON['Toss-Up Question'].replace(/w\)/gi, "\nW)").replace(/x\)/gi, "\nX)").replace(/y\)/gi, "\nY)").replace(/z\)/gi, "\nZ)")
@@ -219,13 +217,10 @@ app.post("/questions/add", async (request, response) => {
     });
   }
 
-  /*if (apiKey !== process.env.MASTER_API_KEY) {
-    return response.status(401).redirect("/?missing=a valid API key");
-  }*/
-
   await APIKeys.findOne( { "API Key": apiKey.toLowerCase() }, (error, result) => {
     if (result) {
       qJSON['Submitter'] = result['Email'];
+      qJSON['Timestamp'] = new Date.now().toISOString();
     } else {
       return response.status(401).redirect(`/questions/${request.params.id}/update/?missing=a valid API key`);
     }
@@ -258,16 +253,16 @@ app.post("/questions/add", async (request, response) => {
     statusArray.push(value);
   }
   if (missingElements.length > 0) {
-    return response.status(400).redirect(`/?missing=${missingElements}`);
+    return response.status(400).redirect(`/questions/add?missing=${missingElements}`);
   } else if (statusArray.length > 0) {
-    return response.status(400).redirect(`/?missing=${category},${subcategory}`);
+    return response.status(400).redirect(`/questions/add?missing=${category},${subcategory}`);
   } else {
     const question = new Questions(qJSON);
     question.save(function (err) {
       if (err) {
         return response.status(500).send(err);
       }
-      response.status(200).redirect("/");
+      response.status(200).redirect("/questions/add");
     });
   }
 });
