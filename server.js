@@ -85,7 +85,7 @@ app.get("/val-api-keys", async (req, res) => {
 })
 
 app.post("/val-api-keys", async (req, res) => {
-  if (req.body['Master API Key']) {
+  if (!req.body['Email']) {
     if (req.body['Master API Key'] === process.env.MASTER_API_KEY) {
       await APIKeys.find({}, async (error, result) => {
         if (error) {
@@ -97,18 +97,17 @@ app.post("/val-api-keys", async (req, res) => {
       return res.status(401);
     }
   } else {
-
+    if (req.body['Master API Key'] === process.env.MASTER_API_KEY) {
+      await APIKeys.findOneAndUpdate({ "API Key": req.body['API Key'] }, { "Valid": req.body['Valid'] }, async (error, result) => {
+        if (error) {
+          return res.status(500).send(err);
+        }
+        return res.status(200);
+      });
+    } else {
+      return res.status(401);
+    }
   }
-  /*if (req.body['Master API Key'] === process.env.MASTER_API_KEY) {
-    await APIKeys.find({}, async (error, result) => {
-      if (error) {
-        return res.status(500).send(err);
-      }
-      return res.status(200);
-    });
-  } else {
-    return res.status(401);
-  }*/
 });
 
 app.get("/questions/add", async (req, res) => {
@@ -120,7 +119,6 @@ app.get("/req-api-key", async (req, res) => {
 });
 
 app.post("/req-api-key", async (req, res) => {
-  console.log(req.body);
   if (!req.body['Email']) {
     return rest.status(400).send("Missing E-mail");
   } else {

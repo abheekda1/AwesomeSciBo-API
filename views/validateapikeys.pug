@@ -24,19 +24,17 @@ body
             th(scope="col") API Key
             th(scope="col") Valid
         tbody
-          each apiKey in apiKeyData
+          each apiKey, index in apiKeyData
             tr
               td= apiKey['Email']
               td= apiKey['API Key']
-              td  
-                form(method="POST" action="/")
-                  input(type="submit", value=apiKey['Valid'] ? 'true' : 'false').btn.btn-primary
+              td
+                button(id=index type="button" onclick="toggleValidity(this.id)").btn.btn-primary= apiKey['Valid']
       
-
   script.
+    let apiKeys;
+    let masterKey;
     window.onload = () => {
-      let apiKeys;
-      let masterKey;
       if(!{JSON.stringify(apiKeyData)}.length > 0) {
         apiKeys = !{JSON.stringify(apiKeyData)};
         document.getElementById('verificationForm').remove();
@@ -44,4 +42,31 @@ body
       if(!{JSON.stringify(masterAPIKey)}.length > 0) {
         masterKey = !{JSON.stringify(masterAPIKey)};
       }
+    }
+    
+    function toggleValidity(id) {
+      const row = document.getElementById(`${id}`).parentElement.parentElement.childNodes;
+      const childValues = [];
+      let jsonObj = {};
+      row.forEach(child => {
+        childValues.push(child.innerText);
+        if (child.innerText === 'true') {
+          child.innerHTML = '<button class="btn btn-primary" id=index type="button" onclick="toggleValidity(this.id)">false</button>';
+        } else if (child.innerText === 'false') {
+          child.innerHTML = '<button class="btn btn-primary" id=index type="button" onclick="toggleValidity(this.id)">true</button>';
+        }
+      });
+      jsonObj['Master API Key'] = masterKey;
+      jsonObj['Email'] = childValues[0];
+      jsonObj['API Key'] = childValues[1];
+      if (childValues[2] === 'false') {
+        jsonObj['Valid'] = true;
+      } else {
+        jsonObj['Valid'] = false;
+      }
+      const email = document.getElementById("")
+      const xhttp = new XMLHttpRequest();
+      xhttp.open("POST", "/val-api-keys");
+      xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+      xhttp.send(JSON.stringify(jsonObj));
     }
