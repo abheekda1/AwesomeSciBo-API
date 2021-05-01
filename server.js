@@ -52,7 +52,8 @@ const QuestionsSchema = new Schema({
   'Bonus Answer': String,
   'Explanation': String,
   'Submitter': String,
-  'Timestamp': String
+  'Timestamp': String,
+  'Source': String
 });
 
 const Questions = mongoose.model('Questions', QuestionsSchema);
@@ -80,11 +81,11 @@ app.get("/", async (req, res) => {
   res.render('index');
 })
 
-app.get("/val-api-keys", async (req, res) => {
+app.get("/apikeys/validate", async (req, res) => {
   res.render('validateapikeys', { apiKeyData: [] });
 })
 
-app.post("/val-api-keys", async (req, res) => {
+app.post("/apikeys/validate", async (req, res) => {
   if (!req.body['Email']) {
     if (req.body['Master API Key'] === process.env.MASTER_API_KEY) {
       await APIKeys.find({}, async (error, result) => {
@@ -114,11 +115,11 @@ app.get("/questions/add", async (req, res) => {
   res.render('question', { categories: categories, questionData: {}, requestInfo: { method: "POST", endpoint: `/questions/add` }, title: "Add" });
 });
 
-app.get("/req-api-key", async (req, res) => {
+app.get("/apikeys/request", async (req, res) => {
   res.render('apikey');
 });
 
-app.post("/req-api-key", async (req, res) => {
+app.post("/apikeys/request", async (req, res) => {
   if (!req.body['Email']) {
     return rest.status(400).send("Missing E-mail");
   } else {
@@ -154,7 +155,7 @@ app.post("/req-api-key", async (req, res) => {
 app.get("/questions/:id/update", (request, response) => {
   Questions.findOne( { "_id": new mongoose.Types.ObjectId(request.params.id) }, (error, result) => {
       if(error) {
-          return response.status(500).send(error);
+        return response.status(500).send(error);
       }
 
       let questionJSON;
@@ -176,12 +177,13 @@ app.post("/questions/:id/update", async (request, response) => {
   console.log(qJSON);
   qJSON['Toss-Up Question'] = qJSON['Toss-Up Question'].replace(/w\)/gi, "\nW)").replace(/x\)/gi, "\nX)").replace(/y\)/gi, "\nY)").replace(/z\)/gi, "\nZ)")
   qJSON['Bonus Question'] = qJSON['Bonus Question'].replace(/w\)/gi, "\nW)").replace(/x\)/gi, "\nX)").replace(/y\)/gi, "\nY)").replace(/z\)/gi, "\nZ)")
+  qJSON['Explanation'] = qJSON['Explanation'].replace(/\r/gi, "");
   let responseJSON = {};
   let subcategories;
 
   const missingElements = [];
 
-  if (!request.body['Category'] || !request.body['Subcategory'] || !request.body['Toss-Up Question Format'] || !request.body['Toss-Up Question'] || !request.body['Toss-Up Answer'] || !request.body['Bonus Question Format'] || !request.body['Bonus Question'] || !request.body['Bonus Answer'] || !request.body['API Key']) {
+  if (!request.body['Category'] || !request.body['Subcategory'] || !request.body['Toss-Up Question Format'] || !request.body['Toss-Up Question'] || !request.body['Toss-Up Answer'] || !request.body['Bonus Question Format'] || !request.body['Bonus Question'] || !request.body['Bonus Answer'] || !request.body['API Key'] || !request.body['Source']) {
     console.log(request.body)
     Object.keys(request.body).forEach(key => {
       if (!request.body[key]) {
@@ -190,14 +192,18 @@ app.post("/questions/:id/update", async (request, response) => {
     });
   }
 
-  await APIKeys.findOne( { "API Key": apiKey.toLowerCase() }, (error, result) => {
-    if (result) {
-      qJSON['Submitter'] = result['Email'];
-      console.log(qJSON['Submitter']);
-    } else {
+  const apiKeyData = await APIKeys.findOne( { "API Key": apiKey.toLowerCase() });
+  if (apiKeyData) {
+    const qData = await Questions.findOne( { "_id": new mongoose.Types.ObjectId(request.params.id) });
+    const isSubmitter = apiKeyData['Email'] === qData['Submitter'];
+    if (!isSubmitter) {
+      return response.status(401).send("You're not the submitter");
+    } else if (!apiKeyData["Valid"]) {
       return response.status(401).redirect(`/questions/${request.params.id}/update/?missing=a valid API key`);
     }
-  });
+  } else {
+    return response.status(401).redirect(`/questions/${request.params.id}/update/?missing=a valid API key`);
+  }
 
   delete qJSON['API Key'];
 
@@ -235,7 +241,7 @@ app.post("/questions/:id/update", async (request, response) => {
       if (err) {
         return response.status(500).send(err);
       }
-      response.status(200).redirect(`/questions/${request.params.id}`);
+      return response.status(200).redirect(`/questions/${request.params.id}`);
     });
   }
 });
@@ -245,12 +251,13 @@ app.post("/questions/add", async (request, response) => {
   const qJSON = request.body;
   qJSON['Toss-Up Question'] = qJSON['Toss-Up Question'].replace(/w\)/gi, "\nW)").replace(/x\)/gi, "\nX)").replace(/y\)/gi, "\nY)").replace(/z\)/gi, "\nZ)")
   qJSON['Bonus Question'] = qJSON['Bonus Question'].replace(/w\)/gi, "\nW)").replace(/x\)/gi, "\nX)").replace(/y\)/gi, "\nY)").replace(/z\)/gi, "\nZ)")
+  qJSON['Explanation'] = qJSON['Explanation'].replace(/\r/gi, "");
   let responseJSON = {};
   let subcategories;
 
   const missingElements = [];
 
-  if (!request.body['Category'] || !request.body['Subcategory'] || !request.body['Toss-Up Question Format'] || !request.body['Toss-Up Question'] || !request.body['Toss-Up Answer'] || !request.body['Bonus Question Format'] || !request.body['Bonus Question'] || !request.body['Bonus Answer'] || !request.body['API Key']) {
+  if (!request.body['Category'] || !request.body['Subcategory'] || !request.body['Toss-Up Question Format'] || !request.body['Toss-Up Question'] || !request.body['Toss-Up Answer'] || !request.body['Bonus Question Format'] || !request.body['Bonus Question'] || !request.body['Bonus Answer'] || !request.body['API Key'] || !request.body['Source']) {
     console.log(request.body)
     Object.keys(request.body).forEach(key => {
       if (!request.body[key]) {
@@ -259,14 +266,16 @@ app.post("/questions/add", async (request, response) => {
     });
   }
 
-  await APIKeys.findOne( { "API Key": apiKey.toLowerCase() }, (error, result) => {
-    if (result) {
-      qJSON['Submitter'] = result['Email'];
-      qJSON['Timestamp'] = new Date().toISOString();
-    } else {
+  const apiKeyData = await APIKeys.findOne( { "API Key": apiKey.toLowerCase() });
+  if (apiKeyData) {
+    qJSON['Submitter'] = apiKeyData['Email'];
+    qJSON['Timestamp'] = new Date().toISOString();
+    if (!apiKeyData['Valid']) {
       return response.status(401).redirect(`/questions/${request.params.id}/update/?missing=a valid API key`);
     }
-  });
+  } else {
+    return response.status(401).redirect(`/questions/${request.params.id}/update/?missing=a valid API key`);
+  }
 
   delete qJSON['API Key'];
 
@@ -304,12 +313,12 @@ app.post("/questions/add", async (request, response) => {
       if (err) {
         return response.status(500).send(err);
       }
-      response.status(200).redirect("/questions/add");
+      return response.status(200).redirect("/questions/add");
     });
   }
 });
 
-app.get("/questions", (request, response) => {
+/*app.get("/questions", (request, response) => {
     let jsonQuery = "{ ";
 
     if (request.query.category) {
@@ -339,7 +348,7 @@ app.get("/questions", (request, response) => {
         }
         response.send(result);
     });
-});
+});*/
 
 /*app.get("/questions/random", (request, response) => {
     let jsonQuery = "{ ";
@@ -373,8 +382,76 @@ app.get("/questions", (request, response) => {
     });
 });*/
 
-app.get("/questions/random", (req, res) => {
+app.get("/questions", (req, res) => {
+  let filter = {};
+  let limit = '0';
 
+  if (req.query['Limit']) {
+    limit = req.query['Limit'];
+  }
+
+  if (req.query['Category']) {
+    filter['Category'] = { $in: [req.query['Category']] };
+    if (req.query['Subcategory']) {
+        filter['Subcategory'] = { $in: [req.query['Subcategory']] };
+    }
+  }
+
+  if (req.query['Submitter']) {
+      filter['Author'] = { $in: [req.query['Submitter']] };
+  }
+
+  Questions.find(filter, (error, result) => {
+      if(error) {
+          return res.status(500).send(error);
+      }
+
+      if (limit === '0') {
+        return res.send(result);
+      } else {
+        return res.send(result.slice(0, limit));
+      }
+  });
+});
+
+app.get("/questions/random", (req, res) => {
+  let filter = {};
+  let limit = 1;
+
+  if (req.query['Limit']) {
+    limit = req.query['Limit'];
+  }
+
+  if (req.query['Category']) {
+    filter['Category'] = { $in: [req.query['Category']] };
+    if (req.query['Subcategory']) {
+        filter['Subcategory'] = { $in: [req.query['Subcategory']] };
+    }
+  }
+
+  if (req.query['Submitter']) {
+      filter['Author'] = { $in: [req.query['Submitter']] };
+  }
+
+  Questions.find(filter, (error, result) => {
+      if(error) {
+          return res.status(500).send(error);
+      }
+
+      const randomArray = result;
+
+      for (let i = randomArray.length -1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var temp = randomArray[i];
+        randomArray[i] = randomArray[j];
+        randomArray[j] = temp;
+      }
+      if (limit === '0') {
+        return res.send(randomArray);
+      } else {
+        return res.send(randomArray.slice(0, limit));
+      }
+  });
 });
 
 app.get("/questions/:id", (request, response) => {
