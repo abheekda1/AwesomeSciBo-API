@@ -57,7 +57,8 @@ const QuestionsSchema = new Schema({
   'Explanation': String,
   'Submitter': String,
   'Timestamp': String,
-  'Source': String
+  'Source': String,
+  'Round': String
 });
 
 const Questions = mongoose.model('Questions', QuestionsSchema);
