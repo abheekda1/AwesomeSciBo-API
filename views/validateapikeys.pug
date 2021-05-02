@@ -18,7 +18,7 @@ body
           input(type="text" name="Master API Key" placeholder="Master API Key" required)#masterapikey.form-control
           div.input-group-append
             input(type="submit" value="Submit").btn.btn-primary
-      table.table
+      table#apikeytable.table.d-none
         thead
           tr
             th(scope="col") E-mail
@@ -39,6 +39,7 @@ body
       if(!{JSON.stringify(apiKeyData)}.length > 0) {
         apiKeys = !{JSON.stringify(apiKeyData)};
         document.getElementById('verificationForm').remove();
+        document.getElementById('apikeytable').classList.remove("d-none");
       }
       if(!{JSON.stringify(masterAPIKey)}.length > 0) {
         masterKey = !{JSON.stringify(masterAPIKey)};
