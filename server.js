@@ -96,12 +96,15 @@ app.get("/", async (req, res) => {
 
 app.get("/round/:id", async (req, res) => {
   res.set('Content-Type', 'text-html');
-  const round = GeneratedRounds.findById(req.params.id);
-  if (round) {
-    return res.status(200).send(Buffer.from(round['htmlContent']));
-  } else {
-    return res.status(400);
-  }
+  GeneratedRounds.findById(req.params.id, async (error, result) => {
+    if (result) {
+      console.log(result);
+      return res.status(200).send((result['htmlContent']));
+      console.log(result['htmlContent']);
+    } else {
+      return res.status(400);
+    }
+  });
 });
 
 app.get("/apikeys/validate", async (req, res) => {
