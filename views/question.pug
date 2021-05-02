@@ -20,7 +20,7 @@ body
             each category in categories
               option(value=category.name)= category.name
           each category in categories
-            select(id=category.name + " TU" name="Subcategory" required).form-select.my-3
+            select(id=category.name + " TU" name="Toss-Up Subcategory" required).form-select.my-3
               option(selected="selected" disabled value="") Select a subcategory in #{category.name}
               each subcategory in category.subcategories
                 option(value=subcategory id=subcategory)= subcategory
@@ -30,6 +30,11 @@ body
             option(value="Multiple Choice") Multiple Choice            
           input(type="text" placeholder="Toss-Up Question" name="Toss-Up Question")#tossupQuestion.form-control.my-3
           input(type="text" placeholder="Toss-Up Answer" name="Toss-Up Answer")#tossupAnswer.form-control.my-3
+          each category in categories
+            select(id=category.name + " B" name="Bonus Subcategory" required).form-select.my-3
+              option(selected="selected" disabled value="") Select a subcategory in #{category.name}
+              each subcategory in category.subcategories
+                option(value=subcategory id=subcategory)= subcategory
           select(name="Bonus Question Format" required)#bonusQuestionFormat.form-select.my-3
             option(selected="selected" disabled value="") Select a bonus format
             option(value="Short Answer") Short Answer
@@ -127,8 +132,8 @@ body
         window.history.replaceState({}, document.title, "/");
       }
       
-      const toggledCategory = document.getElementById(category.value + " TU");
-      if (!toggledCategory) {
+      const toggledCategoryTU = document.getElementById(category.value + " TU");
+      if (!toggledCategoryTU) {
         categoryList.forEach(c => {
           document.getElementById(c.name + " TU").classList.remove("d-flex");
           document.getElementById(c.name + " TU").classList.remove("d-none");
@@ -142,26 +147,63 @@ body
             document.getElementById(c.name + " TU").classList.remove("d-none");
             document.getElementById(c.name + " TU").classList.add("d-none");
             document.getElementById(c.name + " TU").disabled = true;
-            toggledCategory.disabled = false;
-            toggledCategory.classList.remove("d-flex");
-            toggledCategory.classList.remove("d-none");
-            toggledCategory.classList.add("d-flex");
+            toggledCategoryTU.disabled = false;
+            toggledCategoryTU.classList.remove("d-flex");
+            toggledCategoryTU.classList.remove("d-none");
+            toggledCategoryTU.classList.add("d-flex");
+          }
+        });
+      }
+      
+      const toggledCategoryB = document.getElementById(category.value + " B");
+      if (!toggledCategoryB) {
+        categoryList.forEach(c => {
+          document.getElementById(c.name + " B").classList.remove("d-flex");
+          document.getElementById(c.name + " B").classList.remove("d-none");
+          document.getElementById(c.name + " B").classList.add("d-none");
+          document.getElementById(c.name + " B").disabled = true;
+          });
+      } else {
+        categoryList.forEach(c => {
+          if (c.name + " B" !== category.value + " B") {
+            document.getElementById(c.name + " B").classList.remove("d-flex");
+            document.getElementById(c.name + " B").classList.remove("d-none");
+            document.getElementById(c.name + " B").classList.add("d-none");
+            document.getElementById(c.name + " B").disabled = true;
+            toggledCategoryTU.disabled = false;
+            toggledCategoryTU.classList.remove("d-flex");
+            toggledCategoryTU.classList.remove("d-none");
+            toggledCategoryTU.classList.add("d-flex");
           }
         });
       }
     }
     category.onchange = () => {
-      const toggledCategory = document.getElementById(category.value + " TU");
-      toggledCategory.classList.remove("d-flex");
-      toggledCategory.classList.remove("d-none");
-      toggledCategory.classList.add("d-flex");
-      toggledCategory.disabled = false;
+      const toggledCategoryTU = document.getElementById(category.value + " TU");
+      toggledCategoryTU.classList.remove("d-flex");
+      toggledCategoryTU.classList.remove("d-none");
+      toggledCategoryTU.classList.add("d-flex");
+      toggledCategoryTU.disabled = false;
       categoryList.forEach(c => {
         if (c.name + " TU" !== category.value + " TU") {
           document.getElementById(c.name + " TU").classList.remove("d-flex");
           document.getElementById(c.name + " TU").classList.remove("d-none");
           document.getElementById(c.name + " TU").classList.add("d-none");
           document.getElementById(c.name + " TU").setAttribute("disabled", true);
+        }
+      });
+      
+      const toggledCategoryB = document.getElementById(category.value + " B");
+      toggledCategoryB.classList.remove("d-flex");
+      toggledCategoryB.classList.remove("d-none");
+      toggledCategoryB.classList.add("d-flex");
+      toggledCategoryB.disabled = false;
+      categoryList.forEach(c => {
+        if (c.name + " B" !== category.value + " B") {
+          document.getElementById(c.name + " B").classList.remove("d-flex");
+          document.getElementById(c.name + " B").classList.remove("d-none");
+          document.getElementById(c.name + " B").classList.add("d-none");
+          document.getElementById(c.name + " B").setAttribute("disabled", true);
         }
       });
     }

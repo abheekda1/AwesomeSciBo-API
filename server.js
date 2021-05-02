@@ -34,7 +34,11 @@ const QuestionsSchema = new Schema({
     type: String,
     enum: categoryNames
   },
-  'Subcategory': {
+  'Toss-Up Subcategory': {
+    type: String,
+    enum: subCategoryNames
+  },
+  'Bonus Subcategory': {
     type: String,
     enum: subCategoryNames
   },
@@ -281,7 +285,7 @@ app.post("/questions/add", async (request, response) => {
 
   const missingElements = [];
 
-  if (!request.body['Category'] || !request.body['Subcategory'] || !request.body['Toss-Up Question Format'] || !request.body['Toss-Up Question'] || !request.body['Toss-Up Answer'] || !request.body['Bonus Question Format'] || !request.body['Bonus Question'] || !request.body['Bonus Answer'] || !request.body['API Key'] || !request.body['Source']) {
+  if (!request.body['Category'] || !request.body['Toss-Up Subcategory'] || !request.body['Bonus Subcategory'] || !request.body['Toss-Up Question Format'] || !request.body['Toss-Up Question'] || !request.body['Toss-Up Answer'] || !request.body['Bonus Question Format'] || !request.body['Bonus Question'] || !request.body['Bonus Answer'] || !request.body['API Key'] || !request.body['Source']) {
     console.log(request.body)
     Object.keys(request.body).forEach(key => {
       if (!request.body[key]) {
@@ -313,12 +317,18 @@ app.post("/questions/add", async (request, response) => {
   });
 
   if (categoryNames.includes(qJSON['Category'])) {
-    if (!subcategories.includes(qJSON['Subcategory'])) {
-      responseJSON.subcategory = "invalid";
+    if (!subcategories.includes(qJSON['Toss-Up Subcategory'])) {
+      //responseJSON.subcategory = "invalid";
+      missingElements.push("a valid toss-up subcategory");
+    }
+
+    if (!subcategories.includes(qJSON['Bonus Subcategory'])) {
+      missingElements.push("a valid bonus subcategory");
     }
   } else {
-    responseJSON.category = "invalid";
-    responseJSON.subcategory = "invalid";
+    /*responseJSON.category = "invalid";
+    responseJSON.subcategory = "invalid";*/
+    missingElements.push("a valid category");
   }
 
   let statusArray = [];
@@ -329,8 +339,6 @@ app.post("/questions/add", async (request, response) => {
   }
   if (missingElements.length > 0) {
     return response.status(400).redirect(`/questions/add?missing=${missingElements}`);
-  } else if (statusArray.length > 0) {
-    return response.status(400).redirect(`/questions/add?missing=${category},${subcategory}`);
   } else {
     const question = new Questions(qJSON);
     question.save(function (err) {
