@@ -1,6 +1,6 @@
 [
   {
-    "name": "Earth",
+    "name": "Earth Science",
     "subcategories": [
       "General",
       "Meteorology",
@@ -9,7 +9,7 @@
     ]
   },
   {
-    "name": "Space",
+    "name": "Astronomy",
     "subcategories": [
       "General",
       "Astrophysics",
@@ -18,8 +18,22 @@
     ]
   },
   {
+    "name": "Earth and Space",
+    "subcategories": [
+      "General",
+      "Astrophysics",
+      "Cosmology",
+      "Planetary Astronomy",
+      "General",
+      "Meteorology",
+      "Oceanography",
+      "Geology"
+    ]
+  },
+  {
     "name": "Physics",
     "subcategories": [
+      "General",
       "Kinematics",
       "Rotational Motion",
       "Simple Harmonic Motion",

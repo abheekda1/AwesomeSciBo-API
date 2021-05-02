@@ -20,7 +20,7 @@ body
             each category in categories
               option(value=category.name)= category.name
           each category in categories
-            select(id=category.name name="Subcategory" required).form-select.my-3
+            select(id=category.name + " TU" name="Subcategory" required).form-select.my-3
               option(selected="selected" disabled value="") Select a subcategory in #{category.name}
               each subcategory in category.subcategories
                 option(value=subcategory id=subcategory)= subcategory
@@ -127,21 +127,21 @@ body
         window.history.replaceState({}, document.title, "/");
       }
       
-      const toggledCategory = document.getElementById(category.value);
+      const toggledCategory = document.getElementById(category.value + " TU");
       if (!toggledCategory) {
         categoryList.forEach(c => {
-          document.getElementById(c.name).classList.remove("d-flex");
-          document.getElementById(c.name).classList.remove("d-none");
-          document.getElementById(c.name).classList.add("d-none");
-          document.getElementById(c.name).disabled = true;
+          document.getElementById(c.name + " TU").classList.remove("d-flex");
+          document.getElementById(c.name + " TU").classList.remove("d-none");
+          document.getElementById(c.name + " TU").classList.add("d-none");
+          document.getElementById(c.name + " TU").disabled = true;
           });
       } else {
         categoryList.forEach(c => {
-          if (c.name !== category.value) {
-            document.getElementById(c.name).classList.remove("d-flex");
-            document.getElementById(c.name).classList.remove("d-none");
-            document.getElementById(c.name).classList.add("d-none");
-            document.getElementById(c.name).disabled = true;
+          if (c.name + " TU" !== category.value + " TU") {
+            document.getElementById(c.name + " TU").classList.remove("d-flex");
+            document.getElementById(c.name + " TU").classList.remove("d-none");
+            document.getElementById(c.name + " TU").classList.add("d-none");
+            document.getElementById(c.name + " TU").disabled = true;
             toggledCategory.disabled = false;
             toggledCategory.classList.remove("d-flex");
             toggledCategory.classList.remove("d-none");
@@ -151,17 +151,17 @@ body
       }
     }
     category.onchange = () => {
-      const toggledCategory = document.getElementById(category.value);
+      const toggledCategory = document.getElementById(category.value + " TU");
       toggledCategory.classList.remove("d-flex");
       toggledCategory.classList.remove("d-none");
       toggledCategory.classList.add("d-flex");
       toggledCategory.disabled = false;
       categoryList.forEach(c => {
-        if (c.name !== category.value) {
-          document.getElementById(c.name).classList.remove("d-flex");
-          document.getElementById(c.name).classList.remove("d-none");
-          document.getElementById(c.name).classList.add("d-none");
-          document.getElementById(c.name).setAttribute("disabled", true);
+        if (c.name + " TU" !== category.value + " TU") {
+          document.getElementById(c.name + " TU").classList.remove("d-flex");
+          document.getElementById(c.name + " TU").classList.remove("d-none");
+          document.getElementById(c.name + " TU").classList.add("d-none");
+          document.getElementById(c.name + " TU").setAttribute("disabled", true);
         }
       });
     }
