@@ -1,23 +1,5 @@
 [
   {
-    "name": "Earth Science",
-    "subcategories": [
-      "General",
-      "Meteorology",
-      "Oceanography",
-      "Geology"
-    ]
-  },
-  {
-    "name": "Astronomy",
-    "subcategories": [
-      "General",
-      "Astrophysics",
-      "Cosmology",
-      "Planetary Astronomy"
-    ]
-  },
-  {
     "name": "Earth and Space",
     "subcategories": [
       "General",
