@@ -66,6 +66,19 @@ const APIKeySchema = Schema({
 
 const APIKeys = mongoose.model('APIKeys', APIKeySchema);
 
+const generatedRoundSchema = new mongoose.Schema({
+  htmlContent: {
+    type: String,
+    required: true,
+  },
+  requestedBy: {
+    type: String,
+    required: true,
+  },
+});
+
+const GeneratedRounds = mongoose.model("GeneratedRounds", generatedRoundSchema);
+
 app.listen(process.env.API_PORT || 8000, () => {
   console.log("Running on port ", port);
     mongoose.connect(CONNECTION_URL, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false}, (error, client) => {
@@ -80,6 +93,16 @@ app.set('view engine', 'pug');
 app.get("/", async (req, res) => {
   res.render('index');
 })
+
+app.get("/round/:id", async (req, res) => {
+  res.set('Content-Type', 'text-html');
+  const round = GeneratedRounds.findById(request.params.id);
+  if (round) {
+    return res.status(200).send(Buffer.from(round['htmlContent']));
+  } else {
+    return res.status(400);
+  }
+});
 
 app.get("/apikeys/validate", async (req, res) => {
   res.render('validateapikeys', { apiKeyData: [] });
