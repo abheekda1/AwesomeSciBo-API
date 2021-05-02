@@ -95,11 +95,11 @@ app.get("/", async (req, res) => {
 })
 
 app.get("/round/:id", async (req, res) => {
-  res.set('Content-Type', 'text-html');
   GeneratedRounds.findById(req.params.id, async (error, result) => {
     if (result) {
       console.log(result);
-      return res.status(200).send((result['htmlContent']));
+      res.set('Content-Type', 'text-html');
+      res.status(200).send(Buffer.from(result['htmlContent']));
       console.log(result['htmlContent']);
     } else {
       return res.status(400);
