@@ -96,7 +96,7 @@ app.get("/", async (req, res) => {
 
 app.get("/round/:id", async (req, res) => {
   res.set('Content-Type', 'text-html');
-  const round = GeneratedRounds.findById(request.params.id);
+  const round = GeneratedRounds.findById(req.params.id);
   if (round) {
     return res.status(200).send(Buffer.from(round['htmlContent']));
   } else {
