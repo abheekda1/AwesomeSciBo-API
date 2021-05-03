@@ -52,7 +52,8 @@ body
       if (!{JSON.stringify(questionData)}['Category']) {
         const question = !{JSON.stringify(questionData)};
         let catIndex;
-        let subcatIndex;
+        let subcatIndexTU;
+        let subcateIndexB;
         
         catIndex = categoryList.findIndex( element => {
           if (element.name === question['Category']) {
@@ -62,7 +63,8 @@ body
         
         categoryList.some(cat => {
           if (cat.name === question['Category']) {
-            subcatIndex = cat.subcategories.indexOf(question['Subcategory']);
+            subcatIndexTU = cat.subcategories.indexOf(question['Toss-Up Subcategory']);
+            subcatIndexB = cat.subcategories.indexOf(question['Bonus Subcategory']);
             return true;
           } else {
             return false;
@@ -71,7 +73,9 @@ body
         
         category.selectedIndex = catIndex + 1;
         
-        document.getElementById(question['Category']).selectedIndex = subcatIndex + 1;
+        console.log(question['Category'] + " TU");
+        document.getElementById(question['Category'] + " TU").selectedIndex = subcatIndexTU + 1;
+        document.getElementById(question['Category'] + " B").selectedIndex = subcatIndexB + 1;
         
         if (question['Toss-Up Question Format']) {
           if (question['Toss-Up Question Format'] === "Short Answer") {
