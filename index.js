@@ -473,6 +473,10 @@ app.get("/questions/:id", (request, response) => {
   });
 });
 
+app.get("/view", (req, res) => {
+  return res.render('view')
+});
+
 app.get("/favicon.ico", (req, res) => {
   res.sendFile(__dirname + "/views/images/favicon.png");
 });
