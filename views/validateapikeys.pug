@@ -4,9 +4,9 @@ include partials/navbar
 
 +head("Validate API Keys")
 
-body
+body.bg-dark
   +navbar("valapikeys")
-  div.container.w-100
+  div.container.w-100.text-light
     div.row.mt-3
     h5.text-center.mt-1.display-5 Validate API Keys Here:
     div.mb-3.text-align-center
@@ -14,8 +14,8 @@ body
         div.input-group.my-3
           input(type="text" name="Master API Key" placeholder="Master API Key" required)#masterapikey.form-control
           div.input-group-append
-            input(type="submit" value="Submit").btn.btn-outline-primary
-      table#apikeytable.table.d-none
+            input(type="submit" value="Submit").btn.btn-outline-primary.btn-outline-info.text-light
+      table#apikeytable.table.d-none.text-white
         thead
           tr
             th(scope="col") E-mail
@@ -27,7 +27,7 @@ body
               td= apiKey['Email']
               td= apiKey['API Key']
               td
-                button(id=index type="button" onclick="toggleValidity(this.id)").btn.btn-outline-primary= apiKey['Valid']
+                button(id=index type="button" onclick="toggleValidity(this.id)").btn.btn-outline-info.text-light= apiKey['Valid']
       
   script.
     let apiKeys;
@@ -50,9 +50,9 @@ body
       row.forEach(child => {
         childValues.push(child.innerText);
         if (child.innerText === 'true') {
-          child.innerHTML = '<button class="btn btn-outline-primary" id=index type="button" onclick="toggleValidity(this.id)">false</button>';
+          child.innerHTML = '<button class="btn btn-outline-info text-light" id=index type="button" onclick="toggleValidity(this.id)">false</button>';
         } else if (child.innerText === 'false') {
-          child.innerHTML = '<button class="btn btn-outline-primary" id=index type="button" onclick="toggleValidity(this.id)">true</button>';
+          child.innerHTML = '<button class="btn btn-outline-info text-light" id=index type="button" onclick="toggleValidity(this.id)">true</button>';
         }
       });
       jsonObj['Master API Key'] = masterKey;

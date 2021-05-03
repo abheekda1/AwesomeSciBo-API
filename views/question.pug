@@ -4,9 +4,9 @@ include partials/navbar
 
 +head(title + " Question")
 
-body
+body.bg-dark
   +navbar("questions")
-  div.container.w-100
+  div.container.w-100.text-light
     div(id="missing-content-alert" role="alert").alert.alert-danger.d-none Hello!
     h5.text-center.mt-1.display-5 #{title} Your Question Here:
     div.mb-3.text-align-center
@@ -38,12 +38,13 @@ body
         input(type="text" placeholder="Bonus Question" name="Bonus Question" required)#bonusQuestion.form-control.my-3
         input(type="text" placeholder="Bonus Answer" name="Bonus Answer" required)#bonusAnswer.form-control.my-3
         textarea(placeholder="Explanation (not required)" name="Explanation")#explanation.form-control.my-3
-        input(type="text" placeholder="Source" name="Source" required)#source.form-control.my-3
+        input(type="text" placeholder="Source" name="Source" required)#source.form-control.mt-3
+        p.text-light.mb-3 <small><em>Ex. "LCSRC ESS 1v1 Tournament", "LCSRC MOOSE", "LOST", "[Author Name]"
         input(type="text" placeholder="Round (not required)" name="Round")#source.form-control.my-3
         div.input-group.mb-3
           input(type="text" placeholder="API Key" name="API Key" required)#apiKey.form-control
           div.input-group-append
-            input(type="submit" value="Submit").btn.btn-outline-primary
+            input(type="submit" value="Submit").btn.btn-outline-info
   script.
     const categoryList = !{JSON.stringify(categories)};
     const category = document.getElementById("category");

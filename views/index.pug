@@ -4,34 +4,34 @@ include partials/navbar
 
 +head("Home")
   
-body
+body.bg-dark.text-light
   +navbar("home")
   div.container.w-100.pt-3
-    div.p-5.mb-4.bg-light.rounded-3
+    div.p-5.mb-4.bg-secondary.rounded-3.shadow
       h1.display-4 Welcome to the AwesomeSciBo API
       p.lead This is not only a database of questions, but a host for randomly generated rounds and a place for users to submit their own questions!
       hr.my-4
       p Request an API key to get started on adding questions yourself!
       p.lead
-        a(href="/apikeys/request" role="button").btn.btn-outline-primary.btn-lg Request
+        a(href="/apikeys/request" role="button").btn.btn-outline-info.text-white.btn-lg Request
     div.row.row-cols-1.row-cols-md-3.g-4.pb-3
       div.col
-        div(style="width: 18rem;").card.h-100.w-100
+        div(style="width: 18rem;").card.bg-secondary.h-100.w-100.shadow
           div.card-body
             h5.card-title API Keys
             p.card-text Request an API key to get working with the API!
-            a(href="/apikeys/request").card-link Request
+            a(href="/apikeys/request").card-link.link-info Request
       div.col
-        div(style="width: 18rem;").card.h-100.w-100
+        div(style="width: 18rem;").card.bg-secondary.h-100.w-100.shadow
           div.card-body
             h5.card-title Questions
             p.card-text Modify and view the database of questions, or get a random one!
-            a(href="/questions").card-link List
-            a(href="/questions/add").card-link Add
-            a(href="/questions/random").card-link Random
+            a(href="/questions").card-link.link-info List
+            a(href="/questions/add").card-link.link-info Add
+            a(href="/questions/random").card-link.link-info Random
       div.col
-        div(style="width: 18rem;").card.h-100.w-100
+        div(style="width: 18rem;").card.bg-secondary.h-100.w-100.shadow
           div.card-body
             h5.card-title Rounds
             p.card-text View a specific round by generating one using the AwesomeSciBo Discord bot!
-            a(href="https://adat.link/awscibo" target="_blank") Invite
+            a(href="https://adat.link/awscibo" target="_blank").card-link.link-info Invite
