@@ -12,8 +12,14 @@ mixin navbar(active)
             a(href="#" class=active === "questions" ? "active" : "" role="button" data-bs-toggle="dropdown" aria-expanded="false").nav-link.dropdown-toggle Questions
             ul.dropdown-menu
               li
-                a(href="/questions").dropdown-item View Questions
+                a(href="/view").dropdown-item View Questions
                 a(href="/questions/add").dropdown-item Add Questions
+          li.nav-item.dropdown
+            a(href="#" class=active === "api" ? "active" : "" role="button" data-bs-toggle="dropdown" aria-expanded="false").nav-link.dropdown-toggle API
+            ul.dropdown-menu
+              li
+                a(href="/questions").dropdown-item JSON Questions
+                a(href="/apikeys/request").dropdown-item Request an API key
         ul.navbar-nav.flex-row.flex-wrap.ms-md.auto
           li.nav-item.col-6.col-md-auto
             a(target="_blank" href="https://github.com/ADawesomeguy/AwesomeSciBo-API").nav-link.link-light.p-2

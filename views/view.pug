@@ -1,0 +1,73 @@
+doctype html
+include partials/head
+include partials/navbar
+
++head("View Questions")
+
+body.bg-dark.text-light
+  +navbar("questions")
+  div.container.w-100
+    div.input-group.mb-3
+      span.input-group-text Search
+      input(type="text" placeholder="Search Questions")#questionQuery.form-control
+      div.input-group-append
+        input(type="submit" value="Search" onclick="searchQuestions()").btn.btn-outline-info.text-light
+    div.mb-3
+      form.form-inline
+        span Page 
+        input(type="text" name="p")#currentPage
+        span#totalPageNumber
+    div#questionList
+  
+  script.
+    window.onload = async () => {
+      await searchQuestions();
+    }
+    
+    function searchQuestions() {
+      const questionQuery = document.getElementById("questionQuery");
+      const questionList = document.getElementById("questionList");
+      const currentPage = document.getElementById("currentPage");
+      const totalPageNumber = document.getElementById("totalPageNumber");
+      var xhr = new XMLHttpRequest();
+      xhr.onreadystatechange = function() {
+          if (this.readyState == 4 && this.status == 200) {
+            const urlParams = new URLSearchParams(window.location.search);
+            let response = JSON.parse(xhr.responseText);
+            let page;
+            
+            if(urlParams.has("p")) {
+              if (urlParams.get("p") < Math.ceil((response.length + 1)/10)) {
+                page = urlParams.get("p");
+              } else {
+                page = 1;
+              }
+            } else {
+              page = 1;
+            }
+            
+            currentPage.value = page;
+            currentPage.size = `${page}`.length;
+            totalPageNumber.innerHTML = ` of ${Math.ceil((response.length + 1)/10)}`
+            
+            response = response.splice(page * 10 - 10, page * 10);
+            questionList.innerHTML = "";
+            response.forEach((q, index) => {
+              console.log(response[index]);
+              let html = "";
+              html += `<div class="p-4 mb-4 bg-secondary rounded-3 shadow">`;
+              html += `<h1 class="display-6">Toss-Up</h1>`;
+              html += `<p class="lead"><strong>${response[index]["Category"]} (${response[index]["Toss-Up Subcategory"]})</strong> - <em>${response[index]["Toss-Up Question Format"]}</em> ${response[index]["Toss-Up Question"].replace(/\n/gi, "<br>&nbsp;")}</h1><br><br>`;
+              html += `<span title="${response[index]["Toss-Up Answer"]}">Hover for answer</span>`
+              html += `<hr class="my-4">`;
+              html += `<h1 class="display-6">Bonus</h1>`;
+              html += `<p class="lead"><strong>${response[index]["Category"]} (${response[index]["Bonus Subcategory"]})</strong> - <em>${response[index]["Bonus Question Format"]}</em> ${response[index]["Bonus Question"].replace(/\n/gi, "<br>&nbsp;")}</h1><br><br>`;
+              html += `<span title="${response[index]["Bonus Answer"]}">Hover for answer</span>`
+              html += `</div>`;
+              questionList.innerHTML += html;
+            });
+          }
+      };
+      xhr.open("GET", `/questions?q=${questionQuery.value}`, true);
+      xhr.send();
+    }
