@@ -4,8 +4,8 @@ const bodyParser = require('body-parser');
 const nodemailer = require('nodemailer');
 const { v4: uuid } = require('uuid');
 
-const emailData = require("./email.json");
-const categories = require("./categories.json");
+const emailData = require("./config/email.json");
+const categories = require("./config/categories.json");
 
 const app = express();
 app.use(bodyParser.json());
