@@ -14,7 +14,7 @@ body
         div.input-group.my-3
           input(type="text" name="Master API Key" placeholder="Master API Key" required)#masterapikey.form-control
           div.input-group-append
-            input(type="submit" value="Submit").btn.btn-primary
+            input(type="submit" value="Submit").btn.btn-outline-primary
       table#apikeytable.table.d-none
         thead
           tr
@@ -27,7 +27,7 @@ body
               td= apiKey['Email']
               td= apiKey['API Key']
               td
-                button(id=index type="button" onclick="toggleValidity(this.id)").btn.btn-primary= apiKey['Valid']
+                button(id=index type="button" onclick="toggleValidity(this.id)").btn.btn-outline-primary= apiKey['Valid']
       
   script.
     let apiKeys;
@@ -50,9 +50,9 @@ body
       row.forEach(child => {
         childValues.push(child.innerText);
         if (child.innerText === 'true') {
-          child.innerHTML = '<button class="btn btn-primary" id=index type="button" onclick="toggleValidity(this.id)">false</button>';
+          child.innerHTML = '<button class="btn btn-outline-primary" id=index type="button" onclick="toggleValidity(this.id)">false</button>';
         } else if (child.innerText === 'false') {
-          child.innerHTML = '<button class="btn btn-primary" id=index type="button" onclick="toggleValidity(this.id)">true</button>';
+          child.innerHTML = '<button class="btn btn-outline-primary" id=index type="button" onclick="toggleValidity(this.id)">true</button>';
         }
       });
       jsonObj['Master API Key'] = masterKey;
