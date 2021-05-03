@@ -21,5 +21,39 @@
       "Simple Harmonic Motion",
       "Electrostatics"
     ]
+  },
+  {
+    "name": "Biology",
+    "subcategories": [
+      "General",
+      "Cell Biology",
+      "Biochemistry",
+      "Genetics",
+      "Biotechnology",
+      "Evolution",
+      "Ecology",
+      "Plant Biology",
+      "Phylogeny",
+      "Microbiology"
+    ]
+  },
+  {
+    "name": "Chemistry",
+    "subcategories": [
+      "General",
+      "Electrochemistry",
+      "Reactions",
+      "Bonding",
+      "Qualitative Analysis",
+      "Equilibrium",
+      "Kinetics",
+      "Nuclear Chemistry",
+      "Thermochemistry",
+      "Organic Chemistry",
+      "Physical Chemistry",
+      "Analytical Chemistry",
+      "Quantum Chemistry",
+      "Laboratory Chemistry"
+    ]
   }
 ]
