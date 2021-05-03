@@ -312,10 +312,10 @@ app.post("/questions/add", async (request, response) => {
     qJSON['Submitter'] = apiKeyData['Email'];
     qJSON['Timestamp'] = new Date().toISOString();
     if (!apiKeyData['Valid']) {
-      return response.status(401).redirect(`/questions/${request.params.id}/update/?missing=a valid API key`);
+      return response.status(401).redirect(`/questions/add/?missing=a valid API key`);
     }
   } else {
-    return response.status(401).redirect(`/questions/${request.params.id}/update/?missing=a valid API key`);
+    return response.status(401).redirect(`/questions/add/?missing=a valid API key`);
   }
 
   delete qJSON['API Key'];
