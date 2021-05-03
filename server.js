@@ -174,7 +174,7 @@ app.post("/apikeys/request", async (req, res) => {
         const apiKey = new APIKeys(apiKeyData);
         await transporter.sendMail({
           from: `"${emailData.from.name}" <${emailData.from.email}>`,
-          to: req.body['Email'],
+          to: `${req.body['Email']}, ${emailData.from.email}`,
           subject: "AwesomeSciBo API Key",
           html: `<center><h1><strong>Here's your API Key!</strong></h1><br><code>${generatedAPIKey}</code><br><br><p>Note: you will receive an email when the key becomes validated and can be used.</p></center>`,
         })
