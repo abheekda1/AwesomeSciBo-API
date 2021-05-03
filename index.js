@@ -463,6 +463,10 @@ app.get("/questions", (req, res) => {
     filter['Source'] = { $in: req.query['Source']}
   }
 
+  if (req.query['q']) {
+    filter['$text'] = { $search: req.query['q']}
+  }
+
   Questions.find(filter, (error, result) => {
       if(error) {
           return res.status(500).send(error);
@@ -497,6 +501,10 @@ app.get("/questions/random", (req, res) => {
 
   if (req.query['Source']) {
     filter['Source'] = { $in: req.query['Source']}
+  }
+  
+  if (req.query['q']) {
+    filter['$text'] = { $search: req.query['q']}
   }
 
   Questions.find(filter, (error, result) => {
