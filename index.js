@@ -10,8 +10,8 @@ const categories = require("./config/categories.json");
 const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-var database, collection;
-const port = process.env.API_PORT;
+let database, collection;
+const port = process.env.API_PORT || 8000;
 
 const DATABASE_NAME = process.env.DATABASE_NAME;
 const CONNECTION_URL = `mongodb://localhost/${DATABASE_NAME}`;
@@ -61,6 +61,15 @@ const QuestionsSchema = new Schema({
   'Round': String
 });
 
+QuestionsSchema.index(
+  {
+    "Toss-Up Question": "text",
+    "Bonus Question": "text",
+    "Toss-Up Answer": "text",
+    "Bonus Answer": "text"
+  }
+)
+
 const Questions = mongoose.model('Questions', QuestionsSchema);
 
 const APIKeySchema = Schema({
@@ -84,12 +93,12 @@ const generatedRoundSchema = new mongoose.Schema({
 
 const GeneratedRounds = mongoose.model("GeneratedRounds", generatedRoundSchema);
 
-app.listen(process.env.API_PORT || 8000, () => {
-  console.log("Running on port ", port);
-    mongoose.connect(CONNECTION_URL, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false}, (error, client) => {
-      if (error) throw error;
-    });
+app.listen(port, () => {
+  console.log(`Running on port ${port}!`);
+  mongoose.connect(CONNECTION_URL, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true}, (error, client) => {
+    if (error) throw error;
   });
+});
 
 const transporter = nodemailer.createTransport(emailData.smtp);
 
