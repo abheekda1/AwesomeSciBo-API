@@ -376,70 +376,6 @@ app.post("/questions/add", async (request, response) => {
   }
 });
 
-/*app.get("/questions", (request, response) => {
-    let jsonQuery = "{ ";
-
-    if (request.query.category) {
-        jsonQuery += `"Category": { "$in": [${request.query.category}] },`
-        if (request.query.subcategory) {
-            jsonQuery += `"Subcategory": { "$in": [${request.query.subcategory}] },`
-        }
-    }
-
-    if (request.query.author) {
-        jsonQuery += `"Author": { "$in": [${request.query.author}] },`
-    }
-
-    if (request.query.mindifficulty && !request.query.maxdifficulty) {
-        jsonQuery += `"Difficulty": { "$gte": ${request.query.mindifficulty} },`
-    } else if (request.query.maxdifficulty && !request.query.mindifficulty) {
-        jsonQuery += `"Difficulty": { "$lte": ${request.query.maxdifficulty} },`
-    } else if (request.query.mindifficulty && request.query.maxdifficulty) {
-        jsonQuery += `"Difficulty": { "$gte": ${request.query.mindifficulty}, "$lte": ${request.query.maxdifficulty} },`
-    }
-
-    jsonQuery = jsonQuery.substring(0, jsonQuery.length-1);
-    jsonQuery += " }";
-    Questions.find(JSON.parse(jsonQuery), (error, result) => {
-        if(error) {
-            return response.status(500).send(error);
-        }
-        response.send(result);
-    });
-});*/
-
-/*app.get("/questions/random", (request, response) => {
-    let jsonQuery = "{ ";
-
-    if (request.query.category) {
-        jsonQuery += `"Category": { "$in": [${request.query.category}] },`;
-        if (request.query.subcategory) {
-            jsonQuery += `"Subcategory": { "$in": [${request.query.subcategory}] },`;
-        }
-    }
-
-    if (request.query.author) {
-        jsonQuery += `"Author": { "$in": [${request.query.author}] },`;
-    }
-
-    if (request.query.mindifficulty && !request.query.maxdifficulty) {
-        jsonQuery += `"Difficulty": { "$gte": ${request.query.mindifficulty} },`;
-    } else if (request.query.maxdifficulty && !request.query.mindifficulty) {
-        jsonQuery += `"Difficulty": { "$lte": ${request.query.maxdifficulty} },`;
-    } else if (request.query.mindifficulty && request.query.maxdifficulty) {
-        jsonQuery += `"Difficulty": { "$gte": ${request.query.mindifficulty}, "$lte": ${request.query.maxdifficulty} },`;
-    }
-
-    jsonQuery = jsonQuery.substring(0, jsonQuery.length-1);
-    jsonQuery += " }";
-    Questions.find(JSON.parse(jsonQuery), (error, result) => {
-        if(error) {
-            return response.status(500).send(error);
-        }
-        response.send(result[Math.floor(Math.random() * result.length)]);
-    });
-});*/
-
 app.get("/questions", (req, res) => {
   let filter = {};
   let limit = '0';
@@ -502,7 +438,7 @@ app.get("/questions/random", (req, res) => {
   if (req.query['Source']) {
     filter['Source'] = { $in: req.query['Source']}
   }
-  
+
   if (req.query['q']) {
     filter['$text'] = { $search: req.query['q']}
   }
