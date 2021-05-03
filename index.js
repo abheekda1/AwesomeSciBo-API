@@ -440,18 +440,18 @@ app.get("/questions", (req, res) => {
   }
 
   if (req.query['Category']) {
-    filter['Category'] = { $in: [req.query['Category']] };
+    filter['Category'] = { $in: req.query['Category'] };
     if (req.query['Subcategory']) {
-        filter['Subcategory'] = { $in: [req.query['Subcategory']] };
+        filter['Subcategory'] = { $in: req.query['Subcategory'] };
     }
   }
 
   if (req.query['Submitter']) {
-      filter['Submitter'] = { $in: [req.query['Submitter']] };
+      filter['Submitter'] = { $in: req.query['Submitter'] };
   }
 
   if (req.query['Source']) {
-    filter['Source'] = { $in: [req.query['Source']]}
+    filter['Source'] = { $in: req.query['Source']}
   }
 
   Questions.find(filter, (error, result) => {
@@ -476,14 +476,18 @@ app.get("/questions/random", (req, res) => {
   }
 
   if (req.query['Category']) {
-    filter['Category'] = { $in: [req.query['Category']] };
+    filter['Category'] = { $in: req.query['Category'] };
     if (req.query['Subcategory']) {
-        filter['Subcategory'] = { $in: [req.query['Subcategory']] };
+        filter['Subcategory'] = { $in: req.query['Subcategory'] };
     }
   }
 
   if (req.query['Submitter']) {
-      filter['Author'] = { $in: [req.query['Submitter']] };
+      filter['Submitter'] = { $in: req.query['Submitter'] };
+  }
+
+  if (req.query['Source']) {
+    filter['Source'] = { $in: req.query['Source']}
   }
 
   Questions.find(filter, (error, result) => {
