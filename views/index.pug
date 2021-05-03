@@ -1,38 +1,37 @@
 doctype html
-head
-  title Home | AwesomeSciBo API
-  meta(name="viewport" content="width=device-width, initial-scale=1.0")
-  link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css", integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l", crossorigin="anonymous")
-  script(src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous")
-  script(src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous")
-  script(src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous")
+include partials/head
+include partials/navbar
+
++head("Home")
   
 body
+  +navbar("home")
   div.container.w-100.pt-3
-    div.jumbotron
+    div.p-5.mb-4.bg-light.rounded-3
       h1.display-4 Welcome to the AwesomeSciBo API
       p.lead This is not only a database of questions, but a host for randomly generated rounds and a place for users to submit their own questions!
       hr.my-4
       p Request an API key to get started on adding questions yourself!
       p.lead
         a(href="/apikeys/request" role="button").btn.btn-primary.btn-lg Request
-    div.card-deck
-      div(style="width: 18rem;").card
-        div.card-body
-          h5.card-title API Keys
-          p.card-text Request an API key to get working with the API!
-          a(href="/apikeys/request").card-link Request
-      div(style="width: 18rem;").card
-        div.card-body
-          h5.card-title Questions
-          p.card-text Modify and view the database of questions, or get a random one!
-          a(href="/questions").card-link List
-          a(href="/questions/add").card-link Add
-          a(href="/questions/random").card-link Random
-      div(style="width: 18rem;").card
-        div.card-body
-          h5.card-title Rounds
-          p.card-text View a specific round by generating one using the AwesomeSciBo Discord bot!
-          a(href="https://adat.link/awscibo" target="_blank") Invite
-
-        
+    div.row.row-cols-1.row-cols-md-3.g-4.pb-3
+      div.col
+        div(style="width: 18rem;").card.h-100.w-100
+          div.card-body
+            h5.card-title API Keys
+            p.card-text Request an API key to get working with the API!
+            a(href="/apikeys/request").card-link Request
+      div.col
+        div(style="width: 18rem;").card.h-100.w-100
+          div.card-body
+            h5.card-title Questions
+            p.card-text Modify and view the database of questions, or get a random one!
+            a(href="/questions").card-link List
+            a(href="/questions/add").card-link Add
+            a(href="/questions/random").card-link Random
+      div.col
+        div(style="width: 18rem;").card.h-100.w-100
+          div.card-body
+            h5.card-title Rounds
+            p.card-text View a specific round by generating one using the AwesomeSciBo Discord bot!
+            a(href="https://adat.link/awscibo" target="_blank") Invite
