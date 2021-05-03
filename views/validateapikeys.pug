@@ -15,7 +15,7 @@ body.bg-dark
           input(type="text" name="Master API Key" placeholder="Master API Key" required)#masterapikey.form-control
           div.input-group-append
             input(type="submit" value="Submit").btn.btn-outline-primary.btn-outline-info.text-light
-      table#apikeytable.table.d-none
+      table#apikeytable.table.d-none.text-white
         thead
           tr
             th(scope="col") E-mail
@@ -50,9 +50,9 @@ body.bg-dark
       row.forEach(child => {
         childValues.push(child.innerText);
         if (child.innerText === 'true') {
-          child.innerHTML = '<button class="btn btn-outline-primary" id=index type="button" onclick="toggleValidity(this.id)">false</button>';
+          child.innerHTML = '<button class="btn btn-outline-info text-light" id=index type="button" onclick="toggleValidity(this.id)">false</button>';
         } else if (child.innerText === 'false') {
-          child.innerHTML = '<button class="btn btn-outline-primary" id=index type="button" onclick="toggleValidity(this.id)">true</button>';
+          child.innerHTML = '<button class="btn btn-outline-info text-light" id=index type="button" onclick="toggleValidity(this.id)">true</button>';
         }
       });
       jsonObj['Master API Key'] = masterKey;
