@@ -41,7 +41,7 @@ body.bg-dark
         textarea(placeholder="Explanation (not required)" name="Bonus Explanation")#explanation.form-control.my-3
         input(type="text" placeholder="Source (or author email)" name="Source" required)#source.form-control.mt-3
         p.text-light <small>Ex. <em>LCSRC ESS 1v1 Tournament</em>, <em>LCSRC MOOSE</em>, <em>LOST</em></small>
-        input(type="number" placeholder="Round (not required)" name="Round")#round.form-control.my-3
+        input(type="number" style="-webkit-appearance: none; -moz-appearance: textfield;" placeholder="Round (not required)" name="Round" min="1" max="30").form-control
         div.input-group.mb-3
           input(type="text" placeholder="API Key" name="API Key" required)#apiKey.form-control
           div.input-group-append
@@ -124,7 +124,7 @@ body.bg-dark
       if (urlParams.has("updateNotFound")) {
         if (urlParams.get("updateNotFound")) {
           alert("Unfortunately, we couldn't find the question you were looking to update")
-          window.history.replaceState({}, document.title, "/");
+          window.history.replaceState({}, document.title, "/questions/add");
         }
       }
       if (urlParams.has("missing")) {
@@ -132,7 +132,7 @@ body.bg-dark
         document.getElementById("missing-content-alert").innerHTML = `<strong>Error!</strong> You were missing these values: <strong>${missingElements}</strong>`;
         document.getElementById("missing-content-alert").classList.remove("d-none");
         document.getElementById("missing-content-alert").classList.add("show");
-        window.history.replaceState({}, document.title, "/");
+        window.history.replaceState({}, document.title, "/questions/add");
       }
       
       const toggledCategoryTU = document.getElementById(category.value + " TU");
