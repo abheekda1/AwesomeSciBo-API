@@ -26,7 +26,7 @@ body.bg-dark
           option(value="Multiple Choice") Multiple Choice            
         input(type="text" placeholder="Toss-Up Question" name="Toss-Up Question")#tossupQuestion.form-control.my-3
         input(type="text" placeholder="Toss-Up Answer" name="Toss-Up Answer")#tossupAnswer.form-control.my-3
-        textarea(placeholder="Explanation (not required)" name="Toss-Up Explanation")#explanation.form-control.my-3
+        textarea(placeholder="Toss-Up Explanation (not required)" name="Toss-Up Explanation")#tuExplanation.form-control.my-3
         each category in categories
           select(id=category.name + " B" name="Bonus Subcategory" required).form-select.my-3
             option(selected="selected" disabled value="") Select a subcategory in #{category.name}
@@ -38,10 +38,10 @@ body.bg-dark
           option(value="Multiple Choice") Multiple Choice            
         input(type="text" placeholder="Bonus Question" name="Bonus Question" required)#bonusQuestion.form-control.my-3
         input(type="text" placeholder="Bonus Answer" name="Bonus Answer" required)#bonusAnswer.form-control.my-3
-        textarea(placeholder="Explanation (not required)" name="Bonus Explanation")#explanation.form-control.my-3
+        textarea(placeholder="Bonus Explanation (not required)" name="Bonus Explanation")#bExplanation.form-control.my-3
         input(type="text" placeholder="Source (or author email)" name="Source" required)#source.form-control.mt-3
         p.text-light <small>Ex. <em>LCSRC ESS 1v1 Tournament</em>, <em>LCSRC MOOSE</em>, <em>LOST</em></small>
-        input(type="number" style="-webkit-appearance: none; -moz-appearance: textfield;" placeholder="Round (not required)" name="Round" min="1" max="30").form-control.mb-3
+        input(type="number" style="-webkit-appearance: none; -moz-appearance: textfield;" placeholder="Round (not required)" name="Round" min="1" max="30")#round.form-control.mb-3
         div.input-group.mb-3
           input(type="text" placeholder="API Key" name="API Key" required)#apiKey.form-control
           div.input-group-append
@@ -111,8 +111,16 @@ body.bg-dark
           document.getElementById('bonusAnswer').value = question['Bonus Answer'];
         }
         
-        if (question['Explanation']) {
-          document.getElementById('explanation').value = question['Explanation'];
+        if (question['Toss-Up Explanation']) {
+          document.getElementById('tuExplanation').value = question['Toss-Up Explanation'];
+        }
+        
+        if (question['Bonus Explanation']) {
+          document.getElementById('bExplanation').value = question['Bonus Explanation'];
+        }
+        
+        if (question['Round']) {
+          document.getElementById('round').value = question['Round'];
         }
         
         if (question['Source']) {
