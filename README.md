@@ -34,7 +34,7 @@ DATABASE_NAME=[DB_NAME] API_PORT=[PORT] MASTER_API_KEY=[RANDOM STRING] npm run s
 
 ### Schemas:
 Question Schema:
-```json
+```javascript
 {
   'Category': {
     type: String,
@@ -105,7 +105,7 @@ Data: `Question Schema`.
 Method `POST`: Adds an email to the database with an API key that is disabled until validated by someone with the master API key (defined upon running to program).
 
 Data:
-```json
+```javascript
 {
   'Email': String
 }
@@ -117,7 +117,7 @@ Validates/invalidates API keys (best managed through webpage).
 Method `POST` (if request contains `Master API Key` and `Email`): Will update a user's API key (normally validating/invalidating).
 
 Data:
-```json
+```javascript
 {
   'Master API Key': String,
   'Email': String,
