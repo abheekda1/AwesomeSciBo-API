@@ -228,7 +228,8 @@ app.post("/questions/:id/update", async (request, response) => {
   console.log(qJSON);
   qJSON['Toss-Up Question'] = qJSON['Toss-Up Question'].replace(/w\)/gi, "\nW)").replace(/x\)/gi, "\nX)").replace(/y\)/gi, "\nY)").replace(/z\)/gi, "\nZ)")
   qJSON['Bonus Question'] = qJSON['Bonus Question'].replace(/w\)/gi, "\nW)").replace(/x\)/gi, "\nX)").replace(/y\)/gi, "\nY)").replace(/z\)/gi, "\nZ)")
-  qJSON['Explanation'] = qJSON['Explanation'].replace(/\r/gi, "");
+  qJSON['Toss-Up Explanation'] = qJSON['Explanation'].replace(/\r/gi, "");
+  qJSON['Bonus Explanation'] = qJSON['Explanation'].replace(/\r/gi, "");
   let responseJSON = {};
   let subcategories;
 
