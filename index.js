@@ -48,13 +48,14 @@ const QuestionsSchema = new Schema({
   },
   'Toss-Up Question': String,
   'Toss-Up Answer': String,
+  'Toss-Up Explanation': String,
   'Bonus Question Format': {
     type: String,
     enum: ['Multiple Choice', 'Short Answer']
   },
   'Bonus Question': String,
   'Bonus Answer': String,
-  'Explanation': String,
+  'Bonus Explanation': String,
   'Submitter': String,
   'Timestamp': String,
   'Source': String,
