@@ -58,7 +58,7 @@ const QuestionsSchema = new Schema({
   'Submitter': String,
   'Timestamp': String,
   'Source': String,
-  'Round': String
+  'Round': Number
 });
 
 QuestionsSchema.index(
