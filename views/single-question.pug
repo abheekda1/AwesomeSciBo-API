@@ -19,17 +19,25 @@ body.bg-dark.text-light
           let response = JSON.parse(xhr.responseText);
           let html = "";
           html += `<div class="p-4 mb-4 bg-secondary rounded-3 shadow">`;
-          html += `<h1 class="display-6">Toss-Up</h1>`;
+          html += `<h1 class="display-6">Toss-Up `;
+          html += `<a class="link-light" href="/questions/${id}/update"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16"><path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/><path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/></svg></a></h1>`;
           html += `<p class="lead"><strong>${response["Category"]} (${response["Toss-Up Subcategory"]})</strong> - <em>${response["Toss-Up Question Format"]}</em> ${response["Toss-Up Question"].replace(/\n/gi, "<br>&nbsp;")}</h1><br><br>`;
-          html += `<span title="${response["Toss-Up Answer"]}">Hover for answer</span>`
+          html += `<button type="button" class="btn btn-outline-info text-light mx-2" onclick="toggleAnswer('Toss-Up')">Click for answer</button>`
+          html += `<span class="d-none" id="Toss-Up Answer"><small>${response["Toss-Up Answer"]}</small></span>`
           html += `<hr class="my-4">`;
           html += `<h1 class="display-6">Bonus</h1>`;
           html += `<p class="lead"><strong>${response["Category"]} (${response["Bonus Subcategory"]})</strong> - <em>${response["Bonus Question Format"]}</em> ${response["Bonus Question"].replace(/\n/gi, "<br>&nbsp;")}</h1><br><br>`;
-          html += `<span title="${response["Bonus Answer"]}">Hover for answer</span>`
+          html += `<button type="button" class="btn btn-outline-info text-light mx-2" onclick="toggleAnswer('Bonus')">Click for answer</button>`
+          html += `<span class="d-none" id="Bonus Answer"><small>${response["Bonus Answer"]}</small></span>`
           html += `</div>`;
           questionDiv.innerHTML += html;
         }
       };
       xhr.open("GET", `/questions/${id}`, true);
       xhr.send();
+    }
+    
+    function toggleAnswer(questionType) {
+      const hiddenAnswer = document.getElementById(`${questionType} Answer`);
+      hiddenAnswer.classList.toggle('d-none');
     }
