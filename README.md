@@ -98,10 +98,12 @@ Returns: `Question Schema`.
 
 `/questions/[id]/update`
 Method `POST`: Updates a question from the database with the given ID.
+
 Data: `Question Schema`.
 
 `/apikeys/request`
 Method `POST`: Adds an email to the database with an API key that is disabled until validated by someone with the master API key (defined upon running to program).
+
 Data:
 ```json
 {
@@ -112,17 +114,8 @@ Data:
 `/apikeys/validate`
 Validates/invalidates API keys (best managed through webpage).
 
-Method `POST` (if request contains `Master API Key` but not `Email`): Returns authorized with access to API key management.
-Data:
-```json
-{
-  'Master API Key': String
-}
-```
-
--OR-
-
 Method `POST` (if request contains `Master API Key` and `Email`): Will update a user's API key (normally validating/invalidating).
+
 Data:
 ```json
 {
