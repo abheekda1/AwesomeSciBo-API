@@ -12,18 +12,20 @@ body.bg-dark.text-light
       input(type="text" placeholder="Search Questions")#questionQuery.form-control
       div.input-group-append
         input(type="submit" value="Search" onclick="searchQuestions()").btn.btn-outline-info.text-light
-    div.mb-3
-      form.form-inline
-        span Page 
-        input(type="number" name="p")#currentPage.rounded
-        span#totalPageNumber
+    div.row.mb-3
+      div.col-9
+        form.form-inline
+          span Page 
+          input(type="number" name="p")#currentPage.rounded
+          span#totalPageNumber
+      div.col-3.text-end
+        span#numResults
     div#questionList
   
   script.
     let id;
     if (!{JSON.stringify(id)}) {
       id = !{JSON.stringify(id)};
-      console.log(id);
     }
     window.onload = async () => {
       await searchQuestions();
@@ -34,6 +36,7 @@ body.bg-dark.text-light
       const questionList = document.getElementById("questionList");
       const currentPage = document.getElementById("currentPage");
       const totalPageNumber = document.getElementById("totalPageNumber");
+      const numResults = document.getElementById("numResults");
       var xhr = new XMLHttpRequest();
       xhr.onreadystatechange = function() {
           if (this.readyState == 4 && this.status == 200) {
@@ -59,6 +62,12 @@ body.bg-dark.text-light
             currentPage.value = page;
             currentPage.size = `${page}`.length;
             totalPageNumber.innerHTML = ` of ${Math.ceil((response.length + 1)/10)}`
+            
+            if (response.length === 1) {
+              numResults.innerHTML = `${response.length} result`
+            } else {
+              numResults.innerHTML = `${response.length} results`
+            }
             
             response = response.splice(page * 10 - 10, page * 10);
             questionList.innerHTML = "";
@@ -95,9 +104,4 @@ body.bg-dark.text-light
         xhr.open("GET", `/questions?q=${questionQuery.value}`, true);
       }
       xhr.send();
-    }
-    
-    function toggleAnswer(questionType, index) {
-      const hiddenAnswer = document.getElementById(`${questionType} Answer ${index}`);
-      hiddenAnswer.classList.toggle('d-none');
     }

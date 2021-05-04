@@ -477,7 +477,7 @@ app.get("/questions/:id", (request, response) => {
 });
 
 app.get("/view", (req, res) => {
-  return res.render('view')
+  return res.render('view', { id: null })
 });
 
 app.get("/view/:id", (req, res) => {
