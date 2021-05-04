@@ -57,11 +57,13 @@ body.bg-dark.text-light
               html += `<div class="p-4 mb-4 bg-secondary rounded-3 shadow">`;
               html += `<h1 class="display-6">Toss-Up</h1>`;
               html += `<p class="lead"><strong>${response[index]["Category"]} (${response[index]["Toss-Up Subcategory"]})</strong> - <em>${response[index]["Toss-Up Question Format"]}</em> ${response[index]["Toss-Up Question"].replace(/\n/gi, "<br>&nbsp;")}</h1><br><br>`;
-              html += `<span title="${response[index]["Toss-Up Answer"]}">Hover for answer</span>`
+              html += `<button type="button" class="btn btn-outline-info text-light mx-2" onclick="toggleAnswer('Toss-Up', ${index})">Click for answer</button>`
+              html += `<span class="d-none" id="Toss-Up Answer ${index}"><small>${response[index]["Toss-Up Answer"]}</small></span>`
               html += `<hr class="my-4">`;
               html += `<h1 class="display-6">Bonus</h1>`;
               html += `<p class="lead"><strong>${response[index]["Category"]} (${response[index]["Bonus Subcategory"]})</strong> - <em>${response[index]["Bonus Question Format"]}</em> ${response[index]["Bonus Question"].replace(/\n/gi, "<br>&nbsp;")}</h1><br><br>`;
-              html += `<span title="${response[index]["Bonus Answer"]}">Hover for answer</span>`
+              html += `<button type="button" class="btn btn-outline-info text-light mx-2" onclick="toggleAnswer('Bonus', ${index})">Click for answer</button>`
+              html += `<span class="d-none" id="Bonus Answer ${index}"><small>${response[index]["Bonus Answer"]}</small></span>`
               html += `</div>`;
               questionList.innerHTML += html;
             });
@@ -69,4 +71,9 @@ body.bg-dark.text-light
       };
       xhr.open("GET", `/questions?q=${questionQuery.value}`, true);
       xhr.send();
+    }
+    
+    function toggleAnswer(questionType, index) {
+      const hiddenAnswer = document.getElementById(`${questionType} Answer ${index}`);
+      hiddenAnswer.classList.toggle('d-none');
     }
