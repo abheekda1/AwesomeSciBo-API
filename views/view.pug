@@ -20,6 +20,11 @@ body.bg-dark.text-light
     div#questionList
   
   script.
+    let id;
+    if (!{JSON.stringify(id)}) {
+      id = !{JSON.stringify(id)};
+      console.log(id);
+    }
     window.onload = async () => {
       await searchQuestions();
     }
@@ -34,6 +39,11 @@ body.bg-dark.text-light
           if (this.readyState == 4 && this.status == 200) {
             const urlParams = new URLSearchParams(window.location.search);
             let response = JSON.parse(xhr.responseText);
+            
+            if (!Array.isArray(response)) {
+              response = [ response ];
+            }
+            
             let page;
             
             if(urlParams.has("p")) {
@@ -79,7 +89,11 @@ body.bg-dark.text-light
             });
           }
       };
-      xhr.open("GET", `/questions?q=${questionQuery.value}`, true);
+      if (id) {
+        xhr.open("GET", `/questions/${id}`, true);
+      } else {
+        xhr.open("GET", `/questions?q=${questionQuery.value}`, true);
+      }
       xhr.send();
     }
     
