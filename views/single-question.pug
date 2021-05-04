@@ -1,0 +1,35 @@
+doctype html
+include partials/head
+include partials/navbar
+
++head("View Question")
+
+body.bg-dark.text-light
+  +navbar("questions")
+  div.container.w-100
+    div#question
+  
+  script.
+    const id = !{JSON.stringify(id)};
+    window.onload = () => {
+      const questionDiv = document.getElementById("question");
+      var xhr = new XMLHttpRequest();
+      xhr.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          let response = JSON.parse(xhr.responseText);
+          let html = "";
+          html += `<div class="p-4 mb-4 bg-secondary rounded-3 shadow">`;
+          html += `<h1 class="display-6">Toss-Up</h1>`;
+          html += `<p class="lead"><strong>${response["Category"]} (${response["Toss-Up Subcategory"]})</strong> - <em>${response["Toss-Up Question Format"]}</em> ${response["Toss-Up Question"].replace(/\n/gi, "<br>&nbsp;")}</h1><br><br>`;
+          html += `<span title="${response["Toss-Up Answer"]}">Hover for answer</span>`
+          html += `<hr class="my-4">`;
+          html += `<h1 class="display-6">Bonus</h1>`;
+          html += `<p class="lead"><strong>${response["Category"]} (${response["Bonus Subcategory"]})</strong> - <em>${response["Bonus Question Format"]}</em> ${response["Bonus Question"].replace(/\n/gi, "<br>&nbsp;")}</h1><br><br>`;
+          html += `<span title="${response["Bonus Answer"]}">Hover for answer</span>`
+          html += `</div>`;
+          questionDiv.innerHTML += html;
+        }
+      };
+      xhr.open("GET", `/questions/${id}`, true);
+      xhr.send();
+    }

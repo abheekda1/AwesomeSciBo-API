@@ -478,6 +478,16 @@ app.get("/view", (req, res) => {
   return res.render('view')
 });
 
+app.get("/view/:id", (req, res) => {
+  console.log(req.params.id.length);
+  Questions.findOne( { "_id": new mongoose.Types.ObjectId(req.params.id) }, (error, result) => {
+      if(error) {
+          return res.status(500).send(error);
+      }
+      return res.render('single-question', { id: req.params.id });
+  });
+});
+
 app.get("/favicon.ico", (req, res) => {
   res.sendFile(__dirname + "/views/images/favicon.png");
 });
