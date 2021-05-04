@@ -174,7 +174,7 @@ app.get("/apikeys/request", async (req, res) => {
 
 app.post("/apikeys/request", async (req, res) => {
   if (!req.body['Email']) {
-    return rest.status(400).send("Missing E-mail");
+    return res.status(400).send("Missing E-mail");
   } else {
     APIKeys.findOne({ Email: req.body['Email'] }, async (error, result) => {
       if (!result) {
