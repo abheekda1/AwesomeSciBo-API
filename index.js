@@ -292,7 +292,6 @@ app.post("/questions/:id/update", async (request, response) => {
   if (missingElements.length > 0) {
     return response.status(400).redirect(`/questions/${request.params.id.toString()}/update/?missing=${missingElements}`);
   } else {
-    console.log(qJSON);
     Questions.findByIdAndUpdate(request.params.id, qJSON, function (err) {
       if (err) {
         return response.status(500).send(err);
@@ -307,14 +306,14 @@ app.post("/questions/add", async (request, response) => {
   const qJSON = request.body;
   qJSON['Toss-Up Question'] = qJSON['Toss-Up Question'].replace(/w\)/gi, "\nW)").replace(/x\)/gi, "\nX)").replace(/y\)/gi, "\nY)").replace(/z\)/gi, "\nZ)")
   qJSON['Bonus Question'] = qJSON['Bonus Question'].replace(/w\)/gi, "\nW)").replace(/x\)/gi, "\nX)").replace(/y\)/gi, "\nY)").replace(/z\)/gi, "\nZ)")
-  qJSON['Explanation'] = qJSON['Explanation'].replace(/\r/gi, "");
+  qJSON['Toss-Up Explanation'] = qJSON['Toss-Up Explanation'].replace(/\r/gi, "");
+  qJSON['Bonus Explanation'] = qJSON['Bonus Explanation'].replace(/\r/gi, "");
   let responseJSON = {};
   let subcategories;
 
   const missingElements = [];
 
   if (!request.body['Category'] || !request.body['Toss-Up Subcategory'] || !request.body['Bonus Subcategory'] || !request.body['Toss-Up Question Format'] || !request.body['Toss-Up Question'] || !request.body['Toss-Up Answer'] || !request.body['Bonus Question Format'] || !request.body['Bonus Question'] || !request.body['Bonus Answer'] || !request.body['API Key'] || !request.body['Source']) {
-    console.log(request.body)
     Object.keys(request.body).forEach(key => {
       if (!request.body[key]) {
         missingElements.push(key);
