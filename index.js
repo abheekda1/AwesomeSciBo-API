@@ -16,7 +16,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 let database, collection;
 const port = process.env.API_PORT || 8000;
 
-const DATABASE_NAME = process.env.DATABASE_NAME;
+const MONGO_URI = process.env.MONGO_URI;
 const CONNECTION_URL = `mongodb://${MONGO_URI}`;
 const Schema = mongoose.Schema;
 
