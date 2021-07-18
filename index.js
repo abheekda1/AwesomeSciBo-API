@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const nodemailer = require('nodemailer');
 const { v4: uuid } = require('uuid');
+const pdf = require('html-pdf');
 
 const emailData = require("./config/email.json");
 const categories = require("./config/categories.json");
@@ -116,6 +117,19 @@ app.get("/round/:id", async (req, res) => {
     if (result) {
       htmlContent = result.htmlContent;
       res.status(200).send(htmlContent);
+    } else {
+      return res.status(400);
+    }
+  });
+});
+
+app.get("/round/:id/pdf", async (req, res) => {
+  GeneratedRounds.findById(req.params.id, async (error, result) => {
+    if (result) {
+      htmlContent = result.htmlContent;
+      pdf.create(htmlContent).toBuffer(function(err, buffer){
+        console.log('This is a buffer:', Buffer.isBuffer(buffer));
+      });
     } else {
       return res.status(400);
     }
