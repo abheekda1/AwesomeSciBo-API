@@ -62,6 +62,8 @@ body.bg-dark.text-light
             currentPage.value = page;
             currentPage.size = `${page}`.length;
             totalPageNumber.innerHTML = ` of ${Math.ceil((response.length + 1)/10)}`
+            currentPage.min = 1;
+            currentPage.max = Math.ceil((response.length + 1)/10);
             
             if (response.length === 1) {
               numResults.innerHTML = `${response.length} result`
