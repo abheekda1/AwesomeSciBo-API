@@ -16,7 +16,7 @@ let database, collection;
 const port = process.env.API_PORT || 8000;
 
 const DATABASE_NAME = process.env.DATABASE_NAME;
-const CONNECTION_URL = `mongodb://localhost/${DATABASE_NAME}`;
+const CONNECTION_URL = `mongodb://${MONGO_URI}`;
 const Schema = mongoose.Schema;
 
 const categoryNames = [];
