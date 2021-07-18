@@ -123,12 +123,14 @@ app.get("/round/:id", async (req, res) => {
   });
 });
 
-app.get("/round/:id/pdf", async (req, res) => {
+app.get("/round/pdf/:id", async (req, res) => {
   GeneratedRounds.findById(req.params.id, async (error, result) => {
     if (result) {
       htmlContent = result.htmlContent;
       pdf.create(htmlContent).toBuffer(function(err, buffer){
-        console.log('This is a buffer:', Buffer.isBuffer(buffer));
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `attachment; filename=asb-round.pdf`);
+        res.send(buffer);
       });
     } else {
       return res.status(400);
