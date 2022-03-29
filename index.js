@@ -28,8 +28,6 @@ app.listen(port, () => {
   db.connect();
 });
 
-// const transporter = nodemailer.createTransport(emailData.smtp);
-
 app.set('view engine', 'pug');
 
 app.get("/", async (req, res) => {
@@ -141,8 +139,6 @@ app.post("/questions/:id/update", async (request, response) => {
       missingElements.push("a valid bonus subcategory");
     }
   } else {
-    /*responseJSON.category = "invalid";
-    responseJSON.subcategory = "invalid";*/
     missingElements.push("a valid category");
   }
 
@@ -216,8 +212,6 @@ app.post("/questions/add", async (request, response) => {
       missingElements.push("a valid bonus subcategory");
     }
   } else {
-    /*responseJSON.category = "invalid";
-    responseJSON.subcategory = "invalid";*/
     missingElements.push("a valid category");
   }
 
