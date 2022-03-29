@@ -13,7 +13,6 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-let database, collection;
 const port = process.env.API_PORT || 8000;
 
 const MONGO_URI = process.env.MONGO_URI;
