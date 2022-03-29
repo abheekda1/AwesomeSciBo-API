@@ -1,13 +1,18 @@
+require('dotenv').config();
+
 const express = require('express');
 const cors = require('cors');
-const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const nodemailer = require('nodemailer');
 const { v4: uuid } = require('uuid');
 const pdf = require('html-pdf');
 
-const emailData = require("./config/email.json");
-const categories = require("./config/categories.json");
+const Question = require('./models/question');
+const GeneratedRound = require('./models/generatedRound');
+const APIKey = require('./models/apiKey');
+
+const { categories, categoryNames } = require('./helpers/data/categories');
+const db = require('./helpers/db');
 
 const app = express();
 app.use(cors());
@@ -15,95 +20,12 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 const port = process.env.API_PORT || 8000;
 
-const MONGO_URI = process.env.MONGO_URI;
-const CONNECTION_URL = `mongodb://${MONGO_URI}`;
-const Schema = mongoose.Schema;
-
-const categoryNames = [];
-categories.forEach(category => {
-  categoryNames.push(category.name);
-});
-
-const subCategoryNames = [];
-categories.forEach(category => {
-  category.subcategories.forEach(subcategory => {
-    subCategoryNames.push(subcategory);
-  });
-});
-
-const QuestionsSchema = new Schema({
-  'Category': {
-    type: String,
-    enum: categoryNames
-  },
-  'Toss-Up Subcategory': {
-    type: String,
-    enum: subCategoryNames
-  },
-  'Bonus Subcategory': {
-    type: String,
-    enum: subCategoryNames
-  },
-  'Toss-Up Question Format': {
-    type: String,
-    enum: ["Multiple Choice", "Short Answer"]
-  },
-  'Toss-Up Question': String,
-  'Toss-Up Answer': String,
-  'Toss-Up Explanation': String,
-  'Bonus Question Format': {
-    type: String,
-    enum: ['Multiple Choice', 'Short Answer']
-  },
-  'Bonus Question': String,
-  'Bonus Answer': String,
-  'Bonus Explanation': String,
-  'Submitter': String,
-  'Timestamp': String,
-  'Source': String,
-  'Round': Number
-});
-
-QuestionsSchema.index(
-  {
-    "Toss-Up Question": "text",
-    "Bonus Question": "text",
-    "Toss-Up Answer": "text",
-    "Bonus Answer": "text"
-  }
-)
-
-const Questions = mongoose.model('Questions', QuestionsSchema);
-
-const APIKeySchema = Schema({
-  'Email': String,
-  'API Key': String,
-  'Valid': Boolean
-});
-
-const APIKeys = mongoose.model('APIKeys', APIKeySchema);
-
-const generatedRoundSchema = new mongoose.Schema({
-  htmlContent: {
-    type: String,
-    required: true,
-  },
-  requestedBy: {
-    type: String,
-    required: true,
-  },
-});
-
-const GeneratedRounds = mongoose.model("GeneratedRounds", generatedRoundSchema);
-
 app.listen(port, () => {
   console.log(`Running on port ${port}!`);
-  mongoose.connect(CONNECTION_URL, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true}, (error, client) => {
-    if (error) throw error;
-  });
+  db.connect();
 });
 
-const transporter = nodemailer.createTransport(emailData.smtp);
+// const transporter = nodemailer.createTransport(emailData.smtp);
 
 app.set('view engine', 'pug');
 
@@ -112,7 +34,7 @@ app.get("/", async (req, res) => {
 })
 
 app.get("/round/:id", async (req, res) => {
-  GeneratedRounds.findById(req.params.id, async (error, result) => {
+  GeneratedRound.findById(req.params.id, async (error, result) => {
     if (result) {
       htmlContent = result.htmlContent;
       res.status(200).send(htmlContent);
@@ -123,7 +45,7 @@ app.get("/round/:id", async (req, res) => {
 });
 
 app.get("/round/pdf/:id", async (req, res) => {
-  GeneratedRounds.findById(req.params.id, async (error, result) => {
+  GeneratedRound.findById(req.params.id, async (error, result) => {
     if (result) {
       htmlContent = result.htmlContent;
       pdf.create(htmlContent).toBuffer(function(err, buffer){
@@ -144,7 +66,7 @@ app.get("/apikeys/validate", async (req, res) => {
 app.post("/apikeys/validate", async (req, res) => {
   if (!req.body['Email']) {
     if (req.body['Master API Key'] === process.env.MASTER_API_KEY) {
-      await APIKeys.find({}, async (error, result) => {
+      await APIKey.find({}, async (error, result) => {
         if (error) {
           return res.status(500).send(err);
         }
@@ -155,7 +77,7 @@ app.post("/apikeys/validate", async (req, res) => {
     }
   } else {
     if (req.body['Master API Key'] === process.env.MASTER_API_KEY) {
-      await APIKeys.findOneAndUpdate({ "API Key": req.body['API Key'] }, { "Valid": req.body['Valid'] }, async (error, result) => {
+      await APIKey.findOneAndUpdate({ "API Key": req.body['API Key'] }, { "Valid": req.body['Valid'] }, async (error, result) => {
         if (error) {
           return res.status(500).send(err);
         }
@@ -165,12 +87,12 @@ app.post("/apikeys/validate", async (req, res) => {
         } else {
           isValidated = "invalidated";
         }
-        await transporter.sendMail({
+        /*await transporter.sendMail({
           from: `"${emailData.from.name}" <${emailData.from.email}>`,
           to: req.body['Email'],
           subject: "About Your AwesomeSciBo API Key",
           html: `${req.body['Valid'] ? 'Your API key is now valid and ready for use!' : 'Your API key has been invalidated and will not function any longer.'}`,
-        })
+        })*/
         return res.status(200);
       });
     } else {
@@ -191,15 +113,15 @@ app.post("/apikeys/request", async (req, res) => {
   if (!req.body['Email']) {
     return res.status(400).send("Missing E-mail");
   } else {
-    APIKeys.findOne({ Email: req.body['Email'] }, async (error, result) => {
+    APIKey.findOne({ Email: req.body['Email'] }, async (error, result) => {
       if (!result) {
         const generatedAPIKey = uuid();
         const apiKeyData = {};
         apiKeyData['Email'] = req.body['Email'];
         apiKeyData['API Key'] = generatedAPIKey;
         apiKeyData['Valid'] = false;
-        const apiKey = new APIKeys(apiKeyData);
-        await transporter.sendMail({
+        const apiKey = new APIKey(apiKeyData);
+        /*await transporter.sendMail({
           from: `"${emailData.from.name}" <${emailData.from.email}>`,
           to: `${req.body['Email']}, ${emailData.from.email}`,
           subject: "AwesomeSciBo API Key",
@@ -212,7 +134,7 @@ app.post("/apikeys/request", async (req, res) => {
             }
           });
           res.status(200).redirect("/");
-        });
+        });*/
       } else {
         return res.status(400).send('E-mail already has API key');
       }
@@ -221,7 +143,7 @@ app.post("/apikeys/request", async (req, res) => {
 });
 
 app.get("/questions/:id/update", (request, response) => {
-  Questions.findOne( { "_id": new mongoose.Types.ObjectId(request.params.id) }, (error, result) => {
+  Question.findOne( { "_id": new mongoose.Types.ObjectId(request.params.id) }, (error, result) => {
       if(error) {
         return response.status(500).send(error);
       }
@@ -261,9 +183,9 @@ app.post("/questions/:id/update", async (request, response) => {
     });
   }
 
-  const apiKeyData = await APIKeys.findOne( { "API Key": apiKey.toLowerCase() });
+  const apiKeyData = await APIKey.findOne( { "API Key": apiKey.toLowerCase() });
   if (apiKeyData) {
-    const qData = await Questions.findOne( { "_id": new mongoose.Types.ObjectId(request.params.id) });
+    const qData = await Question.findOne( { "_id": new mongoose.Types.ObjectId(request.params.id) });
     const isSubmitter = apiKeyData['Email'] === qData['Submitter'];
     if (!isSubmitter) {
       return response.status(401).send("You're not the submitter");
@@ -309,7 +231,7 @@ app.post("/questions/:id/update", async (request, response) => {
   if (missingElements.length > 0) {
     return response.status(400).redirect(`/questions/${request.params.id.toString()}/update/?missing=${missingElements}`);
   } else {
-    Questions.findByIdAndUpdate(request.params.id, qJSON, function (err) {
+    Question.findByIdAndUpdate(request.params.id, qJSON, function (err) {
       if (err) {
         return response.status(500).send(err);
       }
@@ -338,7 +260,7 @@ app.post("/questions/add", async (request, response) => {
     });
   }
 
-  const apiKeyData = await APIKeys.findOne( { "API Key": apiKey.toLowerCase() });
+  const apiKeyData = await APIKey.findOne( { "API Key": apiKey.toLowerCase() });
   if (apiKeyData) {
     qJSON['Submitter'] = apiKeyData['Email'];
     qJSON['Timestamp'] = new Date().toISOString();
@@ -384,7 +306,7 @@ app.post("/questions/add", async (request, response) => {
   if (missingElements.length > 0) {
     return response.status(400).redirect(`/questions/add?missing=${missingElements}`);
   } else {
-    const question = new Questions(qJSON);
+    const question = new Question(qJSON);
     question.save(function (err) {
       if (err) {
         return response.status(500).send(err);
@@ -421,7 +343,7 @@ app.get("/questions", (req, res) => {
     filter['$text'] = { $search: req.query['q']}
   }
 
-  Questions.find(filter, (error, result) => {
+  Question.find(filter, (error, result) => {
       if(error) {
           return res.status(500).send(error);
       }
@@ -461,7 +383,7 @@ app.get("/questions/random", (req, res) => {
     filter['$text'] = { $search: req.query['q']}
   }
 
-  Questions.find(filter, (error, result) => {
+  Question.find(filter, (error, result) => {
       if(error) {
           return res.status(500).send(error);
       }
@@ -483,7 +405,7 @@ app.get("/questions/random", (req, res) => {
 });
 
 app.get("/questions/:id", (request, response) => {
-  Questions.findOne( { "_id": new mongoose.Types.ObjectId(request.params.id) }, (error, result) => {
+  Question.findOne( { "_id": new mongoose.Types.ObjectId(request.params.id) }, (error, result) => {
       if(error) {
           return response.status(500).send(error);
       }
@@ -496,7 +418,7 @@ app.get("/view", (req, res) => {
 });
 
 app.get("/view/:id", (req, res) => {
-  Questions.findOne( { "_id": new mongoose.Types.ObjectId(req.params.id) }, (error, result) => {
+  Question.findOne( { "_id": new mongoose.Types.ObjectId(req.params.id) }, (error, result) => {
       if(error) {
           return res.status(500).send(error);
       }
