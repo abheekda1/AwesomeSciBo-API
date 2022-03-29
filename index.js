@@ -5,10 +5,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const nodemailer = require('nodemailer');
-const { v4: uuid } = require('uuid');
 const pdf = require('html-pdf');
-
 
 const Question = require('./models/question');
 const GeneratedRound = require('./models/generatedRound');
