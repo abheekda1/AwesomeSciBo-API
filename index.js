@@ -1,3 +1,5 @@
+//TODO: Migrate to JWT instead of API Keys
+
 require('dotenv').config();
 
 const express = require('express');
@@ -6,6 +8,7 @@ const bodyParser = require('body-parser');
 const nodemailer = require('nodemailer');
 const { v4: uuid } = require('uuid');
 const pdf = require('html-pdf');
+
 
 const Question = require('./models/question');
 const GeneratedRound = require('./models/generatedRound');
@@ -59,87 +62,8 @@ app.get("/round/pdf/:id", async (req, res) => {
   });
 });
 
-app.get("/apikeys/validate", async (req, res) => {
-  res.render('validateapikeys', { apiKeyData: [] });
-})
-
-app.post("/apikeys/validate", async (req, res) => {
-  if (!req.body['Email']) {
-    if (req.body['Master API Key'] === process.env.MASTER_API_KEY) {
-      await APIKey.find({}, async (error, result) => {
-        if (error) {
-          return res.status(500).send(err);
-        }
-        return res.status(200).render('validateapikeys', { masterAPIKey: req.body['Master API Key'], apiKeyData: result });
-      });
-    } else {
-      return res.status(401);
-    }
-  } else {
-    if (req.body['Master API Key'] === process.env.MASTER_API_KEY) {
-      await APIKey.findOneAndUpdate({ "API Key": req.body['API Key'] }, { "Valid": req.body['Valid'] }, async (error, result) => {
-        if (error) {
-          return res.status(500).send(err);
-        }
-        let isValidated;
-        if (req.body['Valid']) {
-          isValidated = "validated";
-        } else {
-          isValidated = "invalidated";
-        }
-        /*await transporter.sendMail({
-          from: `"${emailData.from.name}" <${emailData.from.email}>`,
-          to: req.body['Email'],
-          subject: "About Your AwesomeSciBo API Key",
-          html: `${req.body['Valid'] ? 'Your API key is now valid and ready for use!' : 'Your API key has been invalidated and will not function any longer.'}`,
-        })*/
-        return res.status(200);
-      });
-    } else {
-      return res.status(401);
-    }
-  }
-});
-
 app.get("/questions/add", async (req, res) => {
   res.render('question', { categories: categories, questionData: {}, requestInfo: { method: "POST", endpoint: `/questions/add` }, title: "Add" });
-});
-
-app.get("/apikeys/request", async (req, res) => {
-  res.render('apikey');
-});
-
-app.post("/apikeys/request", async (req, res) => {
-  if (!req.body['Email']) {
-    return res.status(400).send("Missing E-mail");
-  } else {
-    APIKey.findOne({ Email: req.body['Email'] }, async (error, result) => {
-      if (!result) {
-        const generatedAPIKey = uuid();
-        const apiKeyData = {};
-        apiKeyData['Email'] = req.body['Email'];
-        apiKeyData['API Key'] = generatedAPIKey;
-        apiKeyData['Valid'] = false;
-        const apiKey = new APIKey(apiKeyData);
-        /*await transporter.sendMail({
-          from: `"${emailData.from.name}" <${emailData.from.email}>`,
-          to: `${req.body['Email']}, ${emailData.from.email}`,
-          subject: "AwesomeSciBo API Key",
-          html: `<center><h1><strong>Here's your API Key!</strong></h1><br><code>${generatedAPIKey}</code><br><br><p>Note: you will receive an email when the key becomes validated and can be used.</p></center>`,
-        })
-        .then(info => {
-          apiKey.save(function (err) {
-            if (err) {
-              return response.status(500).send(err);
-            }
-          });
-          res.status(200).redirect("/");
-        });*/
-      } else {
-        return res.status(400).send('E-mail already has API key');
-      }
-    });
-  }
 });
 
 app.get("/questions/:id/update", (request, response) => {
