@@ -425,7 +425,3 @@ app.get("/view/:id", (req, res) => {
       return res.render('view', { id: req.params.id });
   });
 });
-
-app.get("/favicon.ico", (req, res) => {
-  res.sendFile(__dirname + "/views/images/favicon.png");
-});
